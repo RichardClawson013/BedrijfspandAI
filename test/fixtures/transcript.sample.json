@@ -1,0 +1,7 @@
+[
+  { "turn": 1, "spreker": "systeem", "tekst": "Kies een naam voor je digitale werknemer." },
+  { "turn": 2, "spreker": "ondernemer", "tekst": "Nova." },
+  { "turn": 12, "spreker": "ondernemer", "tekst": "Facturen stuur ik dezelfde dag als de klus klaar is." },
+  { "turn": 14, "spreker": "interviewer", "tekst": "En als de klant niet betaalt?" },
+  { "turn": 15, "spreker": "ondernemer", "tekst": "Dan neem ik eerst zelf contact op." }
+]

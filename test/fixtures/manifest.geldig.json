@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-07-21T14:00:00Z",
+  "werknemer": { "naam": "nova" },
+  "interview": {
+    "id": "iv-20260721-001",
+    "turns_total": 15,
+    "provider": "openrouter",
+    "model": "voorbeeld/modelnaam"
+  },
+  "tasks": [
+    {
+      "id": "T-0001",
+      "naam": "Factuur versturen",
+      "beschrijving": "Zelfde dag als de klus klaar is, pdf naar klant, kopie naar eigen map.",
+      "trigger": "klus afgerond",
+      "afhankelijk_van": [],
+      "autonomie": "eerst-vragen",
+      "escalatie": [
+        { "als": "klant in betalingsgeschil", "dan": "altijd eerst aan eigenaar voorleggen" }
+      ],
+      "faalgevolg": "cashflowprobleem; eigenaar schiet loon voor",
+      "dekking": "GEDEKT",
+      "source_turns": [12, 14, 15]
+    }
+  ],
+  "edges": []
+}

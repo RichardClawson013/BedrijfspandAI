@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bedrijfspandai.local/schema/manifest.schema.json",
+  "title": "BedrijfspandAI manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated", "werknemer", "interview", "tasks", "edges"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "generated": { "type": "string", "format": "date-time" },
+    "werknemer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["naam"],
+      "properties": {
+        "naam": { "type": "string", "minLength": 1 }
+      }
+    },
+    "interview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "turns_total", "provider", "model"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "turns_total": { "type": "integer", "minimum": 0 },
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/task" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    }
+  },
+  "$defs": {
+    "dekking": { "enum": ["GEDEKT", "AFGELEID", "GEEN-DEKKING"] },
+    "sourceTurns": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "naam", "dekking", "source_turns"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "naam": { "type": "string", "minLength": 1 },
+        "beschrijving": { "type": "string" },
+        "trigger": { "type": "string" },
+        "afhankelijk_van": { "type": "array", "items": { "type": "string" } },
+        "autonomie": { "enum": ["autonoom", "eerst-vragen", "nooit"] },
+        "escalatie": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["als", "dan"],
+            "properties": {
+              "als": { "type": "string" },
+              "dan": { "type": "string" }
+            }
+          }
+        },
+        "faalgevolg": { "type": "string" },
+        "dekking": { "$ref": "#/$defs/dekking" },
+        "source_turns": { "$ref": "#/$defs/sourceTurns" }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["van", "naar", "dekking", "source_turns"],
+      "properties": {
+        "van": { "type": "string", "minLength": 1 },
+        "naar": { "type": "string", "minLength": 1 },
+        "soort": { "type": "string" },
+        "dekking": { "$ref": "#/$defs/dekking" },
+        "source_turns": { "$ref": "#/$defs/sourceTurns" }
+      }
+    }
+  }
+}
