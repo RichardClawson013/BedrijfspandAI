@@ -24,4 +24,13 @@ export default [
       },
     },
   },
+  {
+    files: ["relay/**/*.js"],
+    languageOptions: {
+      globals: {
+        fetch: "readonly",
+        URL: "readonly",
+      },
+    },
+  },
 ];

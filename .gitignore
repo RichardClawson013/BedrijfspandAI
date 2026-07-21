@@ -1,5 +1,6 @@
 .env
 relay/.env
+relay/codes.json
 node_modules/
 .DS_Store
 site/assets/bundle.js

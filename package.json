@@ -5,11 +5,12 @@
   "description": "Interviewtool die stilzwijgende bedrijfskennis van een MKB-ondernemer vastlegt en compileert tot een gevalideerd manifest.",
   "type": "module",
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "test": "node --test test/*.test.js relay/test/*.test.js",
     "lint": "eslint .",
     "build:web": "esbuild src/web/main.js --bundle --minify --format=esm --outfile=site/assets/bundle.js",
     "serve:web": "node scripts/serve.js",
     "test:e2e": "playwright test",
+    "relay:start": "node --env-file=relay/.env relay/src/server.js",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "ajv": "^8.20.0",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "express": "^5.2.1"
   }
 }
