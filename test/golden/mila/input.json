@@ -1,0 +1,41 @@
+[
+  { "turn": 1, "type": "naamstap", "naam": "Mila" },
+  { "turn": 2, "type": "dialoog", "spreker": "interviewer", "tekst": "Zijn er dingen die je nooit aan een systeem zou overlaten?" },
+  { "turn": 3, "type": "dialoog", "spreker": "ondernemer", "tekst": "Ontslag aankondigen doe ik altijd zelf, in persoon." },
+  {
+    "turn": 4,
+    "type": "taak",
+    "data": {
+      "id": "T-0001",
+      "naam": "Ontslag aankondigen",
+      "autonomie": "nooit",
+      "dekking": "GEDEKT",
+      "source_turns": [3]
+    }
+  },
+  { "turn": 5, "type": "dialoog", "spreker": "interviewer", "tekst": "En de planning van de ploegendienst?" },
+  { "turn": 6, "type": "dialoog", "spreker": "ondernemer", "tekst": "Dat doe ik nu zelf maar ik heb er nooit echt bij stilgestaan wie dat verder zou mogen doen." },
+  {
+    "turn": 7,
+    "type": "taak",
+    "data": {
+      "id": "T-0002",
+      "naam": "Ploegendienst plannen",
+      "beschrijving": "Wie wanneer werkt bepalen.",
+      "dekking": "AFGELEID",
+      "source_turns": [6]
+    }
+  },
+  { "turn": 8, "type": "dialoog", "spreker": "interviewer", "tekst": "Wat drijft je om dit bedrijf te runnen zoals je het doet?" },
+  { "turn": 9, "type": "dialoog", "spreker": "ondernemer", "tekst": "Dat weet ik eigenlijk niet goed onder woorden te brengen." },
+  {
+    "turn": 10,
+    "type": "ziel_principe",
+    "data": {
+      "titel": "Onuitgesproken kernwaarde",
+      "tekst": "Nog niet onder woorden gebracht door de ondernemer.",
+      "dekking": "GEEN-DEKKING",
+      "source_turns": [9]
+    }
+  }
+]

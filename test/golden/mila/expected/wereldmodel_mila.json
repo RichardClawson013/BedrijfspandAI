@@ -1,0 +1,34 @@
+{
+  "edges": [],
+  "generated": "2026-01-10T09:30:00.000Z",
+  "interview": {
+    "id": "iv-golden-002",
+    "model": "test/golden-model",
+    "provider": "openrouter",
+    "turns_total": 10
+  },
+  "schema_version": "1.0",
+  "tasks": [
+    {
+      "autonomie": "nooit",
+      "dekking": "GEDEKT",
+      "id": "T-0001",
+      "naam": "Ontslag aankondigen",
+      "source_turns": [
+        3
+      ]
+    },
+    {
+      "beschrijving": "Wie wanneer werkt bepalen.",
+      "dekking": "AFGELEID",
+      "id": "T-0002",
+      "naam": "Ploegendienst plannen",
+      "source_turns": [
+        6
+      ]
+    }
+  ],
+  "werknemer": {
+    "naam": "Mila"
+  }
+}

@@ -1,0 +1,169 @@
+[
+  {
+    "naam": "Nova",
+    "turn": 1,
+    "type": "naamstap"
+  },
+  {
+    "spreker": "interviewer",
+    "tekst": "Vertel eens over een vaste taak in je bedrijf.",
+    "turn": 2,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "ondernemer",
+    "tekst": "Elke keer als een klus klaar is, stuur ik dezelfde dag de factuur.",
+    "turn": 3,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "interviewer",
+    "tekst": "En als de klant niet op tijd betaalt?",
+    "turn": 4,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "ondernemer",
+    "tekst": "Dan bel ik zelf eerst, ik wil niet dat een systeem dat overneemt.",
+    "turn": 5,
+    "type": "dialoog"
+  },
+  {
+    "data": {
+      "autonomie": "eerst-vragen",
+      "beschrijving": "Zelfde dag als de klus klaar is, pdf naar klant, kopie naar eigen map.",
+      "dekking": "GEDEKT",
+      "escalatie": [
+        {
+          "als": "klant betaalt niet op tijd",
+          "dan": "eigenaar belt eerst zelf"
+        }
+      ],
+      "faalgevolg": "cashflowprobleem; eigenaar schiet loon voor",
+      "id": "T-0001",
+      "naam": "Factuur versturen",
+      "source_turns": [
+        3,
+        4,
+        5
+      ],
+      "trigger": "klus afgerond"
+    },
+    "turn": 6,
+    "type": "taak"
+  },
+  {
+    "spreker": "interviewer",
+    "tekst": "Wat gebeurt er vóór het versturen van de factuur?",
+    "turn": 7,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "ondernemer",
+    "tekst": "Eerst moet de klus als afgerond zijn afgevinkt in de planning.",
+    "turn": 8,
+    "type": "dialoog"
+  },
+  {
+    "data": {
+      "autonomie": "autonoom",
+      "dekking": "GEDEKT",
+      "id": "T-0002",
+      "naam": "Klus afvinken in planning",
+      "source_turns": [
+        8
+      ]
+    },
+    "turn": 9,
+    "type": "taak"
+  },
+  {
+    "data": {
+      "dekking": "GEDEKT",
+      "naar": "T-0001",
+      "soort": "volgt-op",
+      "source_turns": [
+        8
+      ],
+      "van": "T-0002"
+    },
+    "turn": 10,
+    "type": "edge"
+  },
+  {
+    "spreker": "interviewer",
+    "tekst": "Waarom is snel factureren zo belangrijk voor je?",
+    "turn": 11,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "ondernemer",
+    "tekst": "Omdat ik mijn mensen op tijd wil kunnen betalen, dat vind ik een erezaak.",
+    "turn": 12,
+    "type": "dialoog"
+  },
+  {
+    "data": {
+      "dekking": "GEDEKT",
+      "reden": "Snel factureren houdt de cashflow gezond zodat lonen nooit in gevaar komen.",
+      "source_turns": [
+        12
+      ],
+      "tekst": "Mensen op tijd betalen is een erezaak.",
+      "titel": "Loon op tijd"
+    },
+    "turn": 13,
+    "type": "ziel_principe"
+  },
+  {
+    "spreker": "interviewer",
+    "tekst": "Welk gereedschap gebruik je nu voor het factureren?",
+    "turn": 14,
+    "type": "dialoog"
+  },
+  {
+    "spreker": "ondernemer",
+    "tekst": "Gewoon Excel en dan handmatig een pdf maken.",
+    "turn": 15,
+    "type": "dialoog"
+  },
+  {
+    "data": {
+      "dekking": "GEDEKT",
+      "naam": "Excel",
+      "soort": "huidig",
+      "source_turns": [
+        15
+      ],
+      "taak_id": "T-0001"
+    },
+    "turn": 16,
+    "type": "tool"
+  },
+  {
+    "data": {
+      "dekking": "AFGELEID",
+      "naam": "Geautomatiseerde facturatie-app",
+      "redenering": "Excel is foutgevoelig bij handmatige pdf-export; een facturatie-app kan hetzelfde sjabloon herbruiken.",
+      "soort": "suggestie",
+      "source_turns": [
+        15
+      ],
+      "taak_id": "T-0001"
+    },
+    "turn": 17,
+    "type": "tool"
+  },
+  {
+    "data": {
+      "dekking": "GEDEKT",
+      "domein": "Administratie",
+      "naam": "Facturen opstellen",
+      "source_turns": [
+        15
+      ]
+    },
+    "turn": 18,
+    "type": "skill"
+  }
+]

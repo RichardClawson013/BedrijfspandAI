@@ -1,0 +1,55 @@
+{
+  "edges": [
+    {
+      "dekking": "GEDEKT",
+      "naar": "T-0001",
+      "soort": "volgt-op",
+      "source_turns": [
+        8
+      ],
+      "van": "T-0002"
+    }
+  ],
+  "generated": "2026-01-10T09:00:00.000Z",
+  "interview": {
+    "id": "iv-golden-001",
+    "model": "test/golden-model",
+    "provider": "openrouter",
+    "turns_total": 18
+  },
+  "schema_version": "1.0",
+  "tasks": [
+    {
+      "autonomie": "eerst-vragen",
+      "beschrijving": "Zelfde dag als de klus klaar is, pdf naar klant, kopie naar eigen map.",
+      "dekking": "GEDEKT",
+      "escalatie": [
+        {
+          "als": "klant betaalt niet op tijd",
+          "dan": "eigenaar belt eerst zelf"
+        }
+      ],
+      "faalgevolg": "cashflowprobleem; eigenaar schiet loon voor",
+      "id": "T-0001",
+      "naam": "Factuur versturen",
+      "source_turns": [
+        3,
+        4,
+        5
+      ],
+      "trigger": "klus afgerond"
+    },
+    {
+      "autonomie": "autonoom",
+      "dekking": "GEDEKT",
+      "id": "T-0002",
+      "naam": "Klus afvinken in planning",
+      "source_turns": [
+        8
+      ]
+    }
+  ],
+  "werknemer": {
+    "naam": "Nova"
+  }
+}
