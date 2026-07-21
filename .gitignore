@@ -1,6 +1,4 @@
 .env
-__pycache__/
-*.pyc
-.venv/
-venv/
-.pytest_cache/
+relay/.env
+node_modules/
+.DS_Store

@@ -1,0 +1,17 @@
+{
+  "name": "bedrijfspandai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interviewtool die stilzwijgende bedrijfskennis van een MKB-ondernemer vastlegt en compileert tot een gevalideerd manifest.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "lint": "eslint .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "husky": "^9.1.7"
+  }
+}
