@@ -5,12 +5,17 @@
   "description": "Interviewtool die stilzwijgende bedrijfskennis van een MKB-ondernemer vastlegt en compileert tot een gevalideerd manifest.",
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test test/*.test.js",
     "lint": "eslint .",
+    "build:web": "esbuild src/web/main.js --bundle --minify --format=esm --outfile=site/assets/bundle.js",
+    "serve:web": "node scripts/serve.js",
+    "test:e2e": "playwright test",
     "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
+    "esbuild": "^0.28.1",
     "eslint": "^10.7.0",
     "husky": "^9.1.7"
   },

@@ -4,11 +4,72 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BedrijfspandAI</title>
+    <meta
+      name="description"
+      content="Leg de stilzwijgende kennis van je bedrijf vast in een interview en download een doorwrocht manifest."
+    />
+    <link rel="stylesheet" href="./assets/style.css" />
+    <script type="module" src="./assets/bundle.js"></script>
   </head>
   <body>
+    <header class="site-header">
+      <p class="merk">BedrijfspandAI</p>
+      <p class="tagline">Leg vast wat je bedrijf draaiende houdt — in jouw woorden, met bewijs.</p>
+    </header>
+
     <main>
-      <h1>BedrijfspandAI</h1>
-      <p>Deze site is in aanbouw.</p>
+      <section id="scherm-code" aria-labelledby="scherm-code-titel">
+        <h1 id="scherm-code-titel">Toegangscode</h1>
+        <form id="form-code">
+          <label for="input-code">Toegangscode</label>
+          <input id="input-code" name="code" type="text" autocomplete="off" placeholder="Van je BedrijfspandAI-contact" />
+          <button type="submit">Doorgaan</button>
+        </form>
+        <p class="hulptekst">
+          Nog geen toegangscode?
+          <button id="btn-demo" type="button" class="knop-secundair">
+            Start de demo — sla de toegangscode over
+          </button>
+        </p>
+      </section>
+
+      <section id="scherm-intro" hidden aria-labelledby="scherm-intro-titel">
+        <h1 id="scherm-intro-titel">Voor je begint</h1>
+        <p>
+          Dit is een demo: geen live gesprek, maar een vooraf gescript interview dat
+          beurt voor beurt wordt afgespeeld — zodat je precies ziet hoe een gesprek
+          verandert in een gevalideerd manifest.
+        </p>
+        <div class="demo-keuze">
+          <button type="button" data-demo="geldig" class="kaart-knop">
+            <span class="kaart-knop__titel">Geldig interview (Sam)</span>
+            <span class="kaart-knop__uitleg">Komt door de validator — downloadbare uitvoer aan het eind.</span>
+          </button>
+          <button type="button" data-demo="fout" class="kaart-knop">
+            <span class="kaart-knop__titel">Interview met een fout (Robin)</span>
+            <span class="kaart-knop__uitleg">Een taak zonder bronverwijzing — zie hoe de validator dit afkeurt.</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="scherm-interview" hidden aria-labelledby="scherm-interview-titel">
+        <h1 id="scherm-interview-titel">Interview <span id="interview-naam"></span></h1>
+        <div id="transcript-log" class="transcript-log" aria-live="polite"></div>
+        <div class="interview-besturing">
+          <button id="btn-volgende" type="button">Volgende beurt →</button>
+          <button id="btn-compileer" type="button" hidden>Compileren en valideren</button>
+        </div>
+      </section>
+
+      <section id="scherm-resultaat" hidden aria-labelledby="scherm-resultaat-titel">
+        <h1 id="scherm-resultaat-titel">Resultaat</h1>
+        <div id="resultaat-inhoud"></div>
+        <button id="btn-opnieuw" type="button" class="knop-secundair">Opnieuw beginnen</button>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <p>Niets van dit gesprek wordt op een server bewaard.</p>
+    </footer>
   </body>
 </html>
