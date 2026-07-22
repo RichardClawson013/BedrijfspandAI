@@ -2,8 +2,27 @@ import express from "express";
 import { laadCodes, isGeldigeCode } from "./codes.js";
 import { maakRateLimiter } from "./rateLimiter.js";
 import { stuurNaarOpenRouter } from "./openrouter.js";
+import { stuurNaarGoogle } from "./google.js";
 
-export function maakServer({ codesPath, apiKey, model, toegestaneOrigin, fetchImpl, rateLimiter }) {
+const PROVIDERS = {
+  openrouter: stuurNaarOpenRouter,
+  google: stuurNaarGoogle,
+};
+
+export function maakServer({
+  codesPath,
+  provider = "openrouter",
+  apiKeys,
+  model,
+  toegestaneOrigin,
+  fetchImpl,
+  rateLimiter,
+}) {
+  const stuurNaarProvider = PROVIDERS[provider];
+  if (!stuurNaarProvider) {
+    throw new Error(`onbekende provider: ${provider}`);
+  }
+
   const app = express();
   app.use(express.json({ limit: "256kb" }));
 
@@ -54,35 +73,50 @@ export function maakServer({ codesPath, apiKey, model, toegestaneOrigin, fetchIm
     }
 
     try {
-      const antwoord = await stuurNaarOpenRouter({ messages, apiKey, model, fetchImpl });
+      const antwoord = await stuurNaarProvider({ messages, apiKeys, model, fetchImpl });
       res.status(200).json(antwoord);
     } catch {
-      res.status(502).json({ error: "doorsturen naar OpenRouter is mislukt" });
+      res.status(502).json({ error: `doorsturen naar ${provider} is mislukt` });
     }
   });
 
   return app;
 }
 
+function laadApiKeysUitEnv(provider) {
+  const naam = `${provider.toUpperCase()}_API_KEYS`;
+  return (process.env[naam] ?? "")
+    .split(",")
+    .map((sleutel) => sleutel.trim())
+    .filter((sleutel) => sleutel.length > 0);
+}
+
 function main() {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  const model = process.env.OPENROUTER_MODEL;
+  const provider = process.env.PROVIDER ?? "openrouter";
+  const apiKeys = laadApiKeysUitEnv(provider);
+  const model = process.env.MODEL;
   const toegestaneOrigin = process.env.ALLOWED_ORIGIN;
   const codesPath = process.env.CODES_PATH ?? new URL("../codes.json", import.meta.url).pathname;
   const port = process.env.PORT ?? 8787;
 
-  if (!apiKey) {
-    console.error("OPENROUTER_API_KEY ontbreekt — zet 'm in relay/.env");
+  if (!PROVIDERS[provider]) {
+    console.error(`PROVIDER=${provider} is onbekend — gebruik "openrouter" of "google"`);
+    process.exit(1);
+  }
+  if (apiKeys.length === 0) {
+    console.error(
+      `${provider.toUpperCase()}_API_KEYS ontbreekt — zet minstens één sleutel in relay/.env (komma-gescheiden voor meerdere)`,
+    );
     process.exit(1);
   }
   if (!model) {
-    console.error("OPENROUTER_MODEL ontbreekt — zet 'm in relay/.env");
+    console.error("MODEL ontbreekt — zet 'm in relay/.env");
     process.exit(1);
   }
 
-  const app = maakServer({ codesPath, apiKey, model, toegestaneOrigin });
+  const app = maakServer({ codesPath, provider, apiKeys, model, toegestaneOrigin });
   app.listen(port, () => {
-    console.log(`doorgeefluik luistert op poort ${port}`);
+    console.log(`doorgeefluik luistert op poort ${port}, provider=${provider} (${apiKeys.length} sleutel(s) geconfigureerd)`);
   });
 }
 
