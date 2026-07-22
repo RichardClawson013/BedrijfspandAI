@@ -1,44 +1,45 @@
 :root {
-  --color-bg: oklch(97% 0.012 85);
-  --color-surface: oklch(99% 0.004 85);
-  --color-border: oklch(85% 0.015 85);
-  --color-text: oklch(22% 0.02 60);
-  --color-text-muted: oklch(46% 0.02 60);
-  --color-accent: oklch(42% 0.14 260);
-  --color-accent-contrast: oklch(98% 0.01 260);
-  --color-gedekt: oklch(52% 0.13 150);
-  --color-afgeleid: oklch(58% 0.14 75);
-  --color-geen-dekking: oklch(50% 0.02 60);
+  /* Huisstijl: heel donkerpaars als basis, minimaal aanwezig goud, donker
+     oranje als tweede accent — ref. SBS "The Boat" (gedempt, sfeervol,
+     minimale UI-chrome, onderdompeling i.p.v. "website-gevoel"). */
+  --color-bg: oklch(15% 0.028 300);
+  --color-bg-deep: oklch(11% 0.03 300);
+  --color-surface: oklch(20% 0.032 300);
+  --color-surface-raised: oklch(24% 0.034 300);
+  --color-border: oklch(32% 0.03 300);
+  --color-border-soft: oklch(27% 0.03 300);
+  --color-text: oklch(92% 0.015 90);
+  --color-text-muted: oklch(68% 0.02 290);
 
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-gold: oklch(80% 0.13 86);
+  --color-gold-contrast: oklch(16% 0.03 300);
+  --color-orange: oklch(58% 0.16 42);
+  --color-orange-contrast: oklch(97% 0.01 90);
 
-  --text-hero: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem);
-  --text-h2: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --color-accent: var(--color-gold);
+  --color-accent-contrast: var(--color-gold-contrast);
+
+  --color-gedekt: var(--color-gold);
+  --color-afgeleid: var(--color-orange);
+  --color-geen-dekking: oklch(60% 0.02 290);
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "URW Palladio", Palatino, P052, ui-serif, Georgia, serif;
+  --font-sans: ui-sans-serif, "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+
+  --text-hero: clamp(2rem, 1.5rem + 2vw, 3.1rem);
+  --text-h2: clamp(1.2rem, 1.05rem + 0.5vw, 1.5rem);
   --text-base: clamp(1rem, 0.95rem + 0.2vw, 1.05rem);
 
-  --space-section: clamp(2rem, 1.5rem + 2vw, 4rem);
+  --space-section: clamp(2.5rem, 1.8rem + 2.5vw, 5rem);
   --space-md: 1rem;
-  --space-lg: 1.75rem;
+  --space-lg: 1.85rem;
 
-  --radius: 10px;
+  --radius-lg: 18px;
+  --radius: 12px;
+  --radius-sm: 8px;
   --duration-fast: 150ms;
+  --duration-normal: 420ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: oklch(20% 0.015 260);
-    --color-surface: oklch(25% 0.018 260);
-    --color-border: oklch(35% 0.02 260);
-    --color-text: oklch(94% 0.01 85);
-    --color-text-muted: oklch(72% 0.02 85);
-    --color-accent: oklch(75% 0.13 260);
-    --color-accent-contrast: oklch(15% 0.02 260);
-    --color-gedekt: oklch(70% 0.14 150);
-    --color-afgeleid: oklch(75% 0.14 75);
-    --color-geen-dekking: oklch(75% 0.01 85);
-  }
 }
 
 * {
@@ -47,11 +48,26 @@
 
 body {
   margin: 0;
-  background: var(--color-bg);
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, oklch(28% 0.05 300 / 0.55), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 15%, oklch(35% 0.09 42 / 0.14), transparent 55%),
+    var(--color-bg-deep);
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  line-height: 1.55;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Rustige textuur/korrel, zeer laag contrast — atmosfeer i.p.v. vlak. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 h1,
@@ -59,11 +75,17 @@ h2 {
   font-family: var(--font-serif);
   font-weight: 600;
   line-height: 1.15;
+  letter-spacing: 0.005em;
   margin: 0 0 var(--space-md);
+  color: var(--color-text);
 }
 
 h1 {
   font-size: var(--text-hero);
+}
+
+h2 {
+  font-size: var(--text-h2);
 }
 
 .site-header {
@@ -75,16 +97,18 @@ h1 {
 .merk {
   font-family: var(--font-serif);
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.02em;
-  margin: 0 0 0.35rem;
-  color: var(--color-accent);
+  font-size: 1.05rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem;
+  color: var(--color-gold);
 }
 
 .tagline {
   color: var(--color-text-muted);
   margin: 0;
   max-width: 32rem;
+  font-size: 1.05rem;
 }
 
 main {
@@ -94,61 +118,72 @@ main {
 }
 
 section {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  background:
+    linear-gradient(165deg, oklch(100% 0 0 / 0.03), transparent 40%),
+    var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-block: var(--space-md);
+  box-shadow: 0 1px 0 oklch(100% 0 0 / 0.04) inset, 0 18px 40px -24px oklch(0% 0 0 / 0.55);
 }
 
 label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0.45rem;
 }
 
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 0.65rem 0.8rem;
+  padding: 0.7rem 0.9rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-deep);
   color: var(--color-text);
   font-size: 1rem;
   font-family: inherit;
   margin-bottom: var(--space-md);
+  transition: border-color var(--duration-fast) var(--ease-out-expo), box-shadow var(--duration-fast) var(--ease-out-expo);
 }
 
 input[type="text"]:focus-visible,
 textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px oklch(80% 0.13 86 / 0.28);
 }
 
 .fout-melding {
-  color: var(--color-afgeleid);
-  border: 1px solid var(--color-afgeleid);
+  color: var(--color-orange);
+  border: 1px solid oklch(58% 0.16 42 / 0.5);
+  background: oklch(58% 0.16 42 / 0.08);
   border-radius: var(--radius);
-  padding: 0.6rem 0.85rem;
+  padding: 0.65rem 0.9rem;
   margin: var(--space-md) 0;
 }
 
 button {
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  padding: 0.65rem 1.1rem;
-  background: var(--color-accent);
-  color: var(--color-accent-contrast);
-  transition: transform var(--duration-fast) var(--ease-out-expo), opacity var(--duration-fast);
+  padding: 0.7rem 1.2rem;
+  background: linear-gradient(155deg, var(--color-gold), var(--color-orange));
+  color: var(--color-gold-contrast);
+  transition: transform var(--duration-fast) var(--ease-out-expo), box-shadow var(--duration-normal) var(--ease-out-expo), opacity var(--duration-fast);
 }
 
 button:hover {
-  opacity: 0.9;
+  box-shadow: 0 10px 26px -12px oklch(80% 0.13 86 / 0.55);
 }
 
 button:active {
@@ -157,8 +192,13 @@ button:active {
 
 .knop-secundair {
   background: transparent;
-  color: var(--color-accent);
+  color: var(--color-gold);
   border-color: var(--color-border);
+}
+
+.knop-secundair:hover {
+  border-color: var(--color-gold);
+  box-shadow: none;
 }
 
 .hulptekst {
@@ -178,14 +218,16 @@ button:active {
   align-items: flex-start;
   gap: 0.3rem;
   text-align: left;
-  background: var(--color-bg);
+  background: var(--color-bg-deep);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   padding: var(--space-md);
+  box-shadow: none;
 }
 
 .kaart-knop:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-gold);
+  box-shadow: 0 10px 26px -18px oklch(80% 0.13 86 / 0.5);
 }
 
 .kaart-knop__titel {
@@ -199,43 +241,57 @@ button:active {
 }
 
 #interview-naam {
-  color: var(--color-accent);
+  color: var(--color-gold);
+  font-family: var(--font-serif);
 }
 
 .transcript-log {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
   min-height: 4rem;
   margin-bottom: var(--space-md);
 }
 
 .bericht {
   max-width: 85%;
-  padding: 0.6rem 0.85rem;
+  padding: 0.7rem 0.95rem;
   border-radius: var(--radius);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-soft);
+  animation: bericht-in var(--duration-normal) var(--ease-out-expo) both;
+}
+
+@keyframes bericht-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .bericht--ondernemer {
   align-self: flex-end;
-  background: var(--color-accent);
-  color: var(--color-accent-contrast);
+  background: linear-gradient(155deg, var(--color-gold), var(--color-orange));
+  color: var(--color-gold-contrast);
   border-color: transparent;
 }
 
 .bericht--interviewer,
 .bericht--systeem {
   align-self: flex-start;
-  background: var(--color-bg);
+  background: var(--color-bg-deep);
+  border-left: 2px solid var(--color-gold);
 }
 
 .bericht__spreker {
-  margin: 0 0 0.15rem;
-  font-size: 0.75rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.75;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
 }
 
 .bericht__tekst {
@@ -245,23 +301,25 @@ button:active {
 .extractie {
   border: 1px dashed var(--color-border);
   border-radius: var(--radius);
-  padding: 0.6rem 0.85rem;
-  background: var(--color-bg);
+  padding: 0.7rem 0.95rem;
+  background: var(--color-bg-deep);
+  animation: bericht-in var(--duration-normal) var(--ease-out-expo) both;
 }
 
 .extractie--naamstap {
   border-style: solid;
-  border-color: var(--color-accent);
+  border-color: var(--color-gold);
   font-weight: 600;
 }
 
 .extractie__kop {
-  margin: 0 0 0.2rem;
+  margin: 0 0 0.25rem;
   font-weight: 600;
+  font-family: var(--font-serif);
 }
 
 .extractie__inhoud {
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
   color: var(--color-text-muted);
 }
 
@@ -271,29 +329,43 @@ button:active {
 }
 
 .badge {
-  display: inline-block;
-  padding: 0.1rem 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .badge--gedekt {
-  background: var(--color-gedekt);
-  color: var(--color-accent-contrast);
+  background: oklch(80% 0.13 86 / 0.14);
+  color: var(--color-gold);
 }
 
 .badge--afgeleid {
-  background: transparent;
-  border: 1.5px dashed var(--color-afgeleid);
-  color: var(--color-afgeleid);
+  background: oklch(58% 0.16 42 / 0.12);
+  color: var(--color-orange);
 }
 
 .badge--geendekking {
   background: transparent;
   border: 1px dotted var(--color-geen-dekking);
   color: var(--color-geen-dekking);
+}
+
+.badge--geendekking::before {
+  display: none;
 }
 
 .interview-besturing {
@@ -303,10 +375,11 @@ button:active {
 
 .resultaat__kop {
   font-weight: 600;
+  font-family: var(--font-serif);
 }
 
 .resultaat--afgekeurd .resultaat__kop {
-  color: var(--color-afgeleid);
+  color: var(--color-orange);
 }
 
 .downloadlijst,
@@ -320,23 +393,25 @@ button:active {
 
 .downloadlijst a {
   display: inline-block;
-  padding: 0.5rem 0.85rem;
+  padding: 0.55rem 0.9rem;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  color: var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-gold);
   text-decoration: none;
   font-weight: 600;
+  transition: border-color var(--duration-fast) var(--ease-out-expo), box-shadow var(--duration-fast) var(--ease-out-expo);
 }
 
 .downloadlijst a:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-gold);
+  box-shadow: 0 8px 22px -16px oklch(80% 0.13 86 / 0.6);
 }
 
 .foutenlijst li {
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-afgeleid);
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--color-orange);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.8rem;
 }
 
 .site-footer {
@@ -350,5 +425,6 @@ button:active {
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+    animation: none !important;
   }
 }
