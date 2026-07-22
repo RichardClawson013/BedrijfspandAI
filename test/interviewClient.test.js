@@ -85,11 +85,12 @@ test("ongeldig antwoord op poging 1 en 2, geldig op poging 3: herstelt automatis
   assert.equal(resultaat.beurten.length, 1);
 });
 
-test("na drie ongeldige pogingen stopt het met een duidelijke reden", async () => {
+test("na drie ongeldige pogingen volgt een gracieuze uitleg i.p.v. hard stoppen", async () => {
   const fetchImpl = volgordeFetch([
     jsonResponse(200, { content: "geen json" }),
     jsonResponse(200, { content: "[]" }),
     jsonResponse(200, { content: "ook geen json" }),
+    jsonResponse(200, { content: "Sorry, kun je dat anders verwoorden?" }),
   ]);
 
   const resultaat = await vraagModelBeurt({
@@ -100,9 +101,35 @@ test("na drie ongeldige pogingen stopt het met een duidelijke reden", async () =
     fetchImpl,
   });
 
-  assert.equal(resultaat.ok, false);
-  assert.equal(resultaat.reden, "ongeldig-antwoord-na-herstelpogingen");
+  assert.equal(resultaat.ok, true);
+  assert.equal(resultaat.gracieusHersteld, true);
+  assert.equal(resultaat.uitlegTekst, "Sorry, kun je dat anders verwoorden?");
   assert.equal(resultaat.pogingen.length, 3);
+});
+
+test("valt terug op vaste tekst als zelfs de gracieuze uitleg mislukt", async () => {
+  const fetchImpl = volgordeFetch([
+    jsonResponse(200, { content: "geen json" }),
+    jsonResponse(200, { content: "[]" }),
+    jsonResponse(200, { content: "ook geen json" }),
+  ]);
+  const fetchImplMetNetwerkfout = async (...args) => {
+    const volgende = await fetchImpl(...args);
+    if (volgende === undefined) throw new Error("connect ECONNREFUSED");
+    return volgende;
+  };
+
+  const resultaat = await vraagModelBeurt({
+    apiUrl: "http://luik.test/interview",
+    code: "test-code",
+    systeemPrompt: "SYSTEEM",
+    wisselingen: [],
+    fetchImpl: fetchImplMetNetwerkfout,
+  });
+
+  assert.equal(resultaat.ok, true);
+  assert.equal(resultaat.gracieusHersteld, true);
+  assert.equal(resultaat.uitlegTekst, "Ik liep vast bij het verwerken van je laatste antwoord. Kun je het opnieuw of in andere woorden formuleren?");
 });
 
 test("een netwerkfout (doorgeefluik onbereikbaar) stopt direct, zonder herstelpogingen", async () => {

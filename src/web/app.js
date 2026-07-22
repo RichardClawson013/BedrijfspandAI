@@ -22,8 +22,6 @@ const FOUTMELDINGEN = {
   "doorgeefluik-onbereikbaar":
     "Het doorgeefluik is niet bereikbaar. Controleer of het draait en probeer het opnieuw.",
   "doorgeefluik-fout": "Het doorgeefluik wees het verzoek af.",
-  "ongeldig-antwoord-na-herstelpogingen":
-    "Het model bleef ongeldige antwoorden geven, ook na herstelpogingen. Het interview is gestopt.",
 };
 
 function els() {
@@ -187,6 +185,23 @@ export function initApp() {
 
     if (!resultaat.ok) {
       toonInterviewFout(resultaat);
+      return;
+    }
+
+    if (resultaat.gracieusHersteld) {
+      // Model liep vast, ook na herstelpogingen (SPEC.md §2 punt 4).
+      // Antwoordveld blijft actief — het gesprek stopt nooit onherstelbaar
+      // door een modelhapering.
+      const beurt = {
+        turn: state.transcript.length + 1,
+        type: "dialoog",
+        spreker: "interviewer",
+        tekst: resultaat.uitlegTekst,
+      };
+      state.transcript.push(beurt);
+      el.transcriptLog.append(renderTurn(beurt));
+      state.wisselingen.push({ rol: "model", inhoud: JSON.stringify([beurt]) });
+      zetAntwoordveldActief(true);
       return;
     }
 

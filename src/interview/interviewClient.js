@@ -47,12 +47,44 @@ async function roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }) {
   return { ruweTekst: data.content, provider: data.provider, model: data.model };
 }
 
+const VASTE_TERUGVALTEKST =
+  "Ik liep vast bij het verwerken van je laatste antwoord. Kun je het opnieuw of in andere woorden formuleren?";
+
+/**
+ * Laatste redmiddel na uitgeputte herstelpogingen (SPEC.md §2 punt 4): niet
+ * nogmaals de volledige, complexe protocol-opdracht (daar liep het net al
+ * op vast), maar een sterk vereenvoudigde vraag om alleen gewone tekst —
+ * veel kleinere kans dat het model daar ook op vastloopt. Lukt zelfs dat
+ * niet (netwerkfout, leeg antwoord), dan een vaste, niet-modelgegenereerde
+ * tekst met dezelfde strekking. Gooit nooit een fout: het gesprek moet
+ * altijd door kunnen.
+ */
+async function vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl }) {
+  const gracieuzeMessages = [
+    ...messages,
+    {
+      role: "user",
+      content:
+        "Je antwoorden voldeden niet aan het verplichte formaat, ook niet na herstelpogingen. Schrijf nu ALLEEN gewone tekst — geen JSON, geen array: één korte, vriendelijke zin waarin je de ondernemer uitlegt dat je vastliep bij het verwerken van zijn laatste antwoord, en vraagt dat antwoord opnieuw of anders te verwoorden.",
+      },
+    ];
+
+  try {
+    const { ruweTekst } = await roepInterviewluikAan({ apiUrl, code, messages: gracieuzeMessages, fetchImpl });
+    const tekst = ruweTekst?.trim();
+    return tekst && tekst.length > 0 ? tekst : VASTE_TERUGVALTEKST;
+  } catch {
+    return VASTE_TERUGVALTEKST;
+  }
+}
+
 /**
  * Vraagt het model om de volgende beurt(en). Bij een antwoord dat niet aan
  * het beurt-protocol voldoet, wordt het model tot twee keer opnieuw
- * gevraagd met de concrete foutmelding erbij. Faalt dat ook, dan stopt het
- * interview met een duidelijke reden — nooit stil doorgaan met een
- * onbetrouwbaar antwoord. Een onbereikbaar doorgeefluik of een afgewezen
+ * gevraagd met de concrete foutmelding erbij. Faalt dat ook, dan schakelt
+ * het over op een vereenvoudigde, gracieuze uitleg aan de ondernemer
+ * (`vraagGracieuzeUitleg`) — het interview stopt nooit meer onherstelbaar
+ * door een modelhapering. Een onbereikbaar doorgeefluik of een afgewezen
  * verzoek (bv. ongeldige toegangscode) wordt niet herhaald: opnieuw
  * proberen lost dat niet op.
  */
@@ -88,5 +120,6 @@ export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen
     ];
   }
 
-  return { ok: false, reden: "ongeldig-antwoord-na-herstelpogingen", pogingen: pogingFouten };
+  const uitlegTekst = await vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl });
+  return { ok: true, gracieusHersteld: true, uitlegTekst, pogingen: pogingFouten };
 }

@@ -51,6 +51,19 @@ de punten hieronder.
    vragen. **Toon:** nieuwsgierig en volgend, niet drillend — de
    technieken dienen om de denkwijze van de ondernemer te leren kennen,
    niet om te verhoren.
+
+   **Ongeldige modelantwoorden (herzien tijdens de bouwsessie, Stap 5
+   deelstap 4):** oorspronkelijk gold "max. 2 herstelpogingen, daarna hard
+   stoppen" — dat draaide het hele interview onherstelbaar dood bij één
+   hapering van het model, ook diep in een gesprek. Nu: na de 2
+   herstelpogingen (ongewijzigd) volgt één laatste, sterk vereenvoudigde
+   vraag aan het model — niet de volledige protocol-opdracht opnieuw, maar
+   uitsluitend gewone tekst waarin het aan de ondernemer uitlegt dat het
+   vastliep en vraagt zijn laatste antwoord anders te verwoorden. Mislukt
+   zelfs dat (netwerkfout of leeg antwoord), dan valt het terug op een
+   vaste, niet-modelgegenereerde tekst met dezelfde strekking. In alle
+   gevallen blijft het antwoordveld actief — het gesprek stopt nooit meer
+   onherstelbaar door een modelhapering.
 5. **Verduidelijkingsgrens:** per interviewvraag een drietraps opbouw,
    herzien tijdens de bouwsessie van Stap 5 (deel 2) — bewust niet één
    harde afkap, maar een oplopende grens (confrontatierondes tellen overal

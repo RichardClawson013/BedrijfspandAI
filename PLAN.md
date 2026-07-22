@@ -111,10 +111,23 @@ Deelstappen, elk met eigen bewijs:
    (beurt 1) + antwoord ondernemer (beurt 2) als echte transcriptbeurten
    vóór de naamstap; toon-instructie in het protocol tegen drillende
    vervolgvragen; doorgeefluik-adres vast gecodeerd voor de bètafase i.p.v.
-   zichtbaar veld — zie SPEC.md §2 en §6. **Nog te doen.**
-   **Bewijs:** `npm test` groen; Rob bevestigt in de browser dat het
-   welkomsbericht en de gesprekswijze code-vraag werken zoals hier
-   beschreven.
+   zichtbaar veld — zie SPEC.md §2 en §6. **Klaar**, bewijs: 87/87 tests
+   groen, live testgesprek door Rob bevestigd (welkomsbericht, naamstap,
+   meerdere gespreksrondes).
+   Aanvullingen tijdens dezelfde deelstap, ontdekt via Robs eigen
+   bètatest:
+   - **Knoptekst "Compileren en valideren" → "Gesprek afronden"** —
+     ontwikkelaarstaal hoort niet in een MKB-gerichte interface. **Klaar.**
+   - **Huisstijl site-breed** (donkerpaars/goud/donker oranje,
+     ref. SBS "The Boat") — code-scherm, chatvenster, rapport. **Klaar**,
+     bewijs: golden fixtures opnieuw gegenereerd en byte-gelijk, 87/87
+     tests groen.
+   - **Gracieus herstellen bij ongeldig modelantwoord** (zie SPEC.md §2
+     punt 4) — vervangt "hard stoppen na 2 herstelpogingen". **Nog te
+     doen.**
+   **Bewijs (eindstap):** `npm test` groen; Rob bevestigt in de browser
+   dat het welkomsbericht, de huisstijl en de gesprekswijze code-vraag
+   werken zoals hier beschreven.
 5. Destillatie/confrontatie end-to-end tot en met compileren en
    valideren — nog te doen.
 
