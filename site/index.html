@@ -23,6 +23,14 @@
         <form id="form-code">
           <label for="input-code">Toegangscode</label>
           <input id="input-code" name="code" type="text" autocomplete="off" placeholder="Van je BedrijfspandAI-contact" />
+          <label for="input-api">Doorgeefluik-adres</label>
+          <input
+            id="input-api"
+            name="api"
+            type="text"
+            autocomplete="off"
+            value="http://localhost:8787/interview"
+          />
           <button type="submit">Doorgaan</button>
         </form>
         <p class="hulptekst">
@@ -55,6 +63,14 @@
       <section id="scherm-interview" hidden aria-labelledby="scherm-interview-titel">
         <h1 id="scherm-interview-titel">Interview <span id="interview-naam"></span></h1>
         <div id="transcript-log" class="transcript-log" aria-live="polite"></div>
+
+        <form id="form-antwoord" hidden>
+          <label for="input-antwoord">Jouw antwoord</label>
+          <textarea id="input-antwoord" name="antwoord" rows="2" required></textarea>
+          <button type="submit">Versturen</button>
+        </form>
+        <p id="interview-fout" class="fout-melding" role="alert" hidden></p>
+
         <div class="interview-besturing">
           <button id="btn-volgende" type="button">Volgende beurt →</button>
           <button id="btn-compileer" type="button" hidden>Compileren en valideren</button>

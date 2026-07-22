@@ -21,6 +21,7 @@ export default [
         window: "readonly",
         Blob: "readonly",
         URL: "readonly",
+        fetch: "readonly",
       },
     },
   },
