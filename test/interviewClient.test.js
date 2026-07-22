@@ -31,7 +31,9 @@ test("bouwMessages zet systeemprompt eerst, dan model/ondernemer in volgorde", (
 
 test("geldig antwoord bij de eerste poging geeft direct ok:true", async () => {
   const geldig = JSON.stringify([{ turn: 1, type: "naamstap", naam: "Nova" }]);
-  const fetchImpl = volgordeFetch([jsonResponse(200, { content: geldig })]);
+  const fetchImpl = volgordeFetch([
+    jsonResponse(200, { content: geldig, provider: "google", model: "gemini-2.5-flash" }),
+  ]);
 
   const resultaat = await vraagModelBeurt({
     apiUrl: "http://luik.test/interview",
@@ -43,6 +45,24 @@ test("geldig antwoord bij de eerste poging geeft direct ok:true", async () => {
 
   assert.equal(resultaat.ok, true);
   assert.equal(resultaat.beurten.length, 1);
+});
+
+test("provider en model uit de doorgeefluik-respons komen terug in het resultaat", async () => {
+  const geldig = JSON.stringify([{ turn: 1, type: "naamstap", naam: "Nova" }]);
+  const fetchImpl = volgordeFetch([
+    jsonResponse(200, { content: geldig, provider: "google", model: "gemini-2.5-flash" }),
+  ]);
+
+  const resultaat = await vraagModelBeurt({
+    apiUrl: "http://luik.test/interview",
+    code: "test-code",
+    systeemPrompt: "SYSTEEM",
+    wisselingen: [],
+    fetchImpl,
+  });
+
+  assert.equal(resultaat.provider, "google");
+  assert.equal(resultaat.model, "gemini-2.5-flash");
 });
 
 test("ongeldig antwoord op poging 1 en 2, geldig op poging 3: herstelt automatisch", async () => {

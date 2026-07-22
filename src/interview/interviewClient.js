@@ -44,7 +44,7 @@ async function roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }) {
   }
 
   const data = await response.json();
-  return data.content;
+  return { ruweTekst: data.content, provider: data.provider, model: data.model };
 }
 
 /**
@@ -62,15 +62,17 @@ export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen
 
   for (let poging = 1; poging <= MAX_HERSTELPOGINGEN + 1; poging += 1) {
     let ruweTekst;
+    let provider;
+    let model;
     try {
-      ruweTekst = await roepInterviewluikAan({ apiUrl, code, messages, fetchImpl });
+      ({ ruweTekst, provider, model } = await roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }));
     } catch (fout) {
       return { ok: false, reden: fout.categorie ?? "onbekende-fout", detail: fout.message };
     }
 
     const resultaat = parseModelResponse(ruweTekst);
     if (resultaat.valid) {
-      return { ok: true, beurten: resultaat.turns, ruweTekst };
+      return { ok: true, beurten: resultaat.turns, ruweTekst, provider, model };
     }
 
     pogingFouten.push({ poging, errors: resultaat.errors });
