@@ -5,6 +5,7 @@ import { buildAgents } from "./buildAgents.js";
 import { buildSkills } from "./buildSkills.js";
 import { buildTools } from "./buildTools.js";
 import { buildRapport } from "./buildRapport.js";
+import { buildOpenOnderwerpen } from "./buildOpenOnderwerpen.js";
 import { canonicalJson } from "./canonicalJson.js";
 
 export function compile(transcript, { generated, interviewId, provider, model }) {
@@ -26,6 +27,7 @@ export function compile(transcript, { generated, interviewId, provider, model })
     [`skills_${naamSlug}.md`]: buildSkills(parsed),
     [`tools_${naamSlug}.md`]: buildTools(parsed),
     [`rapport_${naamSlug}.html`]: buildRapport(parsed),
+    [`open_onderwerpen_trainingbot_${naamSlug}.md`]: buildOpenOnderwerpen(parsed),
     "transcript.json": canonicalJson(transcript),
   };
 }
