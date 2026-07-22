@@ -227,8 +227,20 @@ adapter per provider, niet enkel een modelnaam-parameter op één adapter.
 - **Toegangscodes:** Rob maakt ze aan en trekt ze in, in één bestand op de
   doorgeefluik-machine. Rob stuurt testers zelf hun code.
 - Consequentie, bewust aanvaard: staat de pc uit of herstart hij, dan is
-  het interview onbereikbaar. De site zelf blijft staan en toont dan een
-  nette melding.
+  het interview onbereikbaar.
+- **Netwerkfout-herstel (herzien tijdens Stap 5 deelstap 5):** oorspronkelijk
+  toonde een onbereikbaar doorgeefluik alleen een nette melding en stopte
+  het gesprek daar hard. Net als bij ongeldige modelantwoorden (zie het
+  interview-hoofdstuk hierboven) mag een technische hapering het gesprek
+  nooit onherstelbaar beëindigen. Nu: bij categorie
+  `doorgeefluik-onbereikbaar` probeert de site zelf eerst automatisch en
+  stil enkele keren opnieuw (oplopende vertraging). Blijft het
+  onbereikbaar, dan toont de site de foutmelding mét een
+  "Probeer opnieuw"-knop die het gesprek hervat vanaf hetzelfde punt — de
+  al gegeven antwoorden van de ondernemer blijven bewaard, niets hoeft
+  opnieuw getypt. Geldt niet voor categorie `doorgeefluik-fout` (bv. een
+  afgewezen toegangscode): opnieuw proberen lost dat niet op, dus geen
+  automatische herpoging, wel dezelfde knop beschikbaar.
 - **Bètafase, tijdelijk (toegevoegd tijdens de bouwsessie, Stap 5 deelstap
   4):** tot de permanente tunnel/domein-oplossing er is (Stap 4, punt 4 —
   Cloudflare-account/domein, nog te doen), draait een **Cloudflare Quick

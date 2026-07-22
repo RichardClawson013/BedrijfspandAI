@@ -2,6 +2,17 @@ import { parseModelResponse } from "./validateModelTurn.js";
 
 const MAX_HERSTELPOGINGEN = 2;
 
+// SPEC.md §6 ("Netwerkfout-herstel"): een onbereikbaar doorgeefluik mag het
+// gesprek niet meer hard beëindigen. Alleen deze categorie wordt herhaald —
+// `doorgeefluik-fout` (bv. een afgewezen toegangscode) lost opnieuw proberen
+// niet op.
+const MAX_NETWERK_HERPOGINGEN = 2;
+const NETWERK_BACKOFF_MS = [500, 1500];
+
+function wacht(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Bouwt de OpenAI-stijl messages-array die het doorgeefluik verwacht. Het
  * luik is stateless, dus bij elke aanroep wordt de volledige geschiedenis
@@ -21,7 +32,7 @@ export function bouwMessages(systeemPrompt, wisselingen) {
   return messages;
 }
 
-async function roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }) {
+async function doeEenAanroep({ apiUrl, code, messages, fetchImpl }) {
   let response;
   try {
     response = await fetchImpl(apiUrl, {
@@ -47,6 +58,28 @@ async function roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }) {
   return { ruweTekst: data.content, provider: data.provider, model: data.model };
 }
 
+/**
+ * Probeert het doorgeefluik aan te roepen, met stille herpoging (oplopende
+ * backoff) zolang de fout categorie `doorgeefluik-onbereikbaar` heeft. Een
+ * afgewezen verzoek (`doorgeefluik-fout`, bv. ongeldige toegangscode) wordt
+ * nooit herhaald — dat lost een nieuwe poging niet op.
+ */
+async function roepInterviewluikAan({ apiUrl, code, messages, fetchImpl, wachtImpl = wacht }) {
+  for (let poging = 0; poging <= MAX_NETWERK_HERPOGINGEN; poging += 1) {
+    try {
+      return await doeEenAanroep({ apiUrl, code, messages, fetchImpl });
+    } catch (fout) {
+      const isLaatstePoging = poging === MAX_NETWERK_HERPOGINGEN;
+      if (fout.categorie !== "doorgeefluik-onbereikbaar" || isLaatstePoging) {
+        throw fout;
+      }
+      await wachtImpl(NETWERK_BACKOFF_MS[poging]);
+    }
+  }
+  // Onbereikbaar: de lus hierboven retourneert of gooit altijd binnen
+  // MAX_NETWERK_HERPOGINGEN + 1 pogingen.
+}
+
 const VASTE_TERUGVALTEKST =
   "Ik liep vast bij het verwerken van je laatste antwoord. Kun je het opnieuw of in andere woorden formuleren?";
 
@@ -59,7 +92,7 @@ const VASTE_TERUGVALTEKST =
  * tekst met dezelfde strekking. Gooit nooit een fout: het gesprek moet
  * altijd door kunnen.
  */
-async function vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl }) {
+async function vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl, wachtImpl }) {
   const gracieuzeMessages = [
     ...messages,
     {
@@ -70,7 +103,7 @@ async function vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl }) {
     ];
 
   try {
-    const { ruweTekst } = await roepInterviewluikAan({ apiUrl, code, messages: gracieuzeMessages, fetchImpl });
+    const { ruweTekst } = await roepInterviewluikAan({ apiUrl, code, messages: gracieuzeMessages, fetchImpl, wachtImpl });
     const tekst = ruweTekst?.trim();
     return tekst && tekst.length > 0 ? tekst : VASTE_TERUGVALTEKST;
   } catch {
@@ -84,11 +117,12 @@ async function vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl }) {
  * gevraagd met de concrete foutmelding erbij. Faalt dat ook, dan schakelt
  * het over op een vereenvoudigde, gracieuze uitleg aan de ondernemer
  * (`vraagGracieuzeUitleg`) — het interview stopt nooit meer onherstelbaar
- * door een modelhapering. Een onbereikbaar doorgeefluik of een afgewezen
- * verzoek (bv. ongeldige toegangscode) wordt niet herhaald: opnieuw
- * proberen lost dat niet op.
+ * door een modelhapering. Een onbereikbaar doorgeefluik wordt binnen
+ * `roepInterviewluikAan` al stil herhaald (SPEC.md §6); pas als ook die
+ * herpogingen uitgeput zijn, of bij een afgewezen verzoek (bv. ongeldige
+ * toegangscode), geeft deze functie `ok: false` terug.
  */
-export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen, fetchImpl }) {
+export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen, fetchImpl, wachtImpl }) {
   let messages = bouwMessages(systeemPrompt, wisselingen);
   const pogingFouten = [];
 
@@ -97,7 +131,7 @@ export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen
     let provider;
     let model;
     try {
-      ({ ruweTekst, provider, model } = await roepInterviewluikAan({ apiUrl, code, messages, fetchImpl }));
+      ({ ruweTekst, provider, model } = await roepInterviewluikAan({ apiUrl, code, messages, fetchImpl, wachtImpl }));
     } catch (fout) {
       return { ok: false, reden: fout.categorie ?? "onbekende-fout", detail: fout.message };
     }
@@ -120,6 +154,6 @@ export async function vraagModelBeurt({ apiUrl, code, systeemPrompt, wisselingen
     ];
   }
 
-  const uitlegTekst = await vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl });
+  const uitlegTekst = await vraagGracieuzeUitleg({ apiUrl, code, messages, fetchImpl, wachtImpl });
   return { ok: true, gracieusHersteld: true, uitlegTekst, pogingen: pogingFouten };
 }

@@ -125,6 +125,7 @@ test("valt terug op vaste tekst als zelfs de gracieuze uitleg mislukt", async ()
     systeemPrompt: "SYSTEEM",
     wisselingen: [],
     fetchImpl: fetchImplMetNetwerkfout,
+    wachtImpl: async () => {},
   });
 
   assert.equal(resultaat.ok, true);
@@ -132,11 +133,15 @@ test("valt terug op vaste tekst als zelfs de gracieuze uitleg mislukt", async ()
   assert.equal(resultaat.uitlegTekst, "Ik liep vast bij het verwerken van je laatste antwoord. Kun je het opnieuw of in andere woorden formuleren?");
 });
 
-test("een netwerkfout (doorgeefluik onbereikbaar) stopt direct, zonder herstelpogingen", async () => {
+test("een netwerkfout (doorgeefluik onbereikbaar) probeert stil opnieuw, en faalt pas als alle pogingen op zijn", async () => {
   let aanroepen = 0;
   const fetchImpl = async () => {
     aanroepen += 1;
     throw new Error("connect ECONNREFUSED");
+  };
+  const gewachtMet = [];
+  const wachtImpl = async (ms) => {
+    gewachtMet.push(ms);
   };
 
   const resultaat = await vraagModelBeurt({
@@ -145,11 +150,36 @@ test("een netwerkfout (doorgeefluik onbereikbaar) stopt direct, zonder herstelpo
     systeemPrompt: "SYSTEEM",
     wisselingen: [],
     fetchImpl,
+    wachtImpl,
   });
 
   assert.equal(resultaat.ok, false);
   assert.equal(resultaat.reden, "doorgeefluik-onbereikbaar");
-  assert.equal(aanroepen, 1);
+  assert.equal(aanroepen, 3);
+  assert.deepEqual(gewachtMet, [500, 1500]);
+});
+
+test("netwerkfout op de eerste poging herstelt vanzelf op de tweede", async () => {
+  const geldig = JSON.stringify([{ turn: 1, type: "naamstap", naam: "Nova" }]);
+  let aanroepen = 0;
+  const fetchImpl = async () => {
+    aanroepen += 1;
+    if (aanroepen === 1) throw new Error("connect ECONNREFUSED");
+    return jsonResponse(200, { content: geldig, provider: "google", model: "gemini-2.5-flash" });
+  };
+
+  const resultaat = await vraagModelBeurt({
+    apiUrl: "http://luik.test/interview",
+    code: "test-code",
+    systeemPrompt: "SYSTEEM",
+    wisselingen: [],
+    fetchImpl,
+    wachtImpl: async () => {},
+  });
+
+  assert.equal(resultaat.ok, true);
+  assert.equal(resultaat.beurten.length, 1);
+  assert.equal(aanroepen, 2);
 });
 
 test("een ongeldige toegangscode (401 van het luik) stopt direct, zonder herstelpogingen", async () => {

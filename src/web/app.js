@@ -40,6 +40,7 @@ function els() {
     formAntwoord: document.getElementById("form-antwoord"),
     inputAntwoord: document.getElementById("input-antwoord"),
     interviewFout: document.getElementById("interview-fout"),
+    btnProbeerOpnieuw: document.getElementById("btn-probeer-opnieuw"),
     btnVolgende: document.getElementById("btn-volgende"),
     btnCompileer: document.getElementById("btn-compileer"),
     resultaatInhoud: document.getElementById("resultaat-inhoud"),
@@ -98,6 +99,13 @@ export function initApp() {
     verstuurAntwoord();
   });
 
+  el.btnProbeerOpnieuw.addEventListener("click", () => {
+    // De invoer van de ondernemer staat al in state.wisselingen — niets
+    // hoeft opnieuw getypt (SPEC.md §6, netwerkfout-herstel).
+    verbergInterviewFout();
+    haalVolgendeModelBeurtOp();
+  });
+
   function startDemo(sleutel) {
     const demo = DEMOS[sleutel];
     state.modus = "demo";
@@ -106,7 +114,7 @@ export function initApp() {
     el.transcriptLog.replaceChildren();
     el.interviewNaam.textContent = "";
     el.formAntwoord.hidden = true;
-    el.interviewFout.hidden = true;
+    verbergInterviewFout();
     el.btnVolgende.hidden = false;
     el.btnCompileer.hidden = true;
     toonScherm(el.schermInterview, alleSchermen);
@@ -140,7 +148,7 @@ export function initApp() {
 
     el.transcriptLog.replaceChildren();
     el.interviewNaam.textContent = "";
-    el.interviewFout.hidden = true;
+    verbergInterviewFout();
     el.btnVolgende.hidden = true;
     el.btnCompileer.hidden = true;
     el.formAntwoord.hidden = false;
@@ -241,7 +249,13 @@ export function initApp() {
     const basis = FOUTMELDINGEN[resultaat.reden] ?? `Onverwachte fout: ${resultaat.reden}`;
     el.interviewFout.textContent = resultaat.detail ? `${basis} (${resultaat.detail})` : basis;
     el.interviewFout.hidden = false;
+    el.btnProbeerOpnieuw.hidden = false;
     zetAntwoordveldActief(false);
+  }
+
+  function verbergInterviewFout() {
+    el.interviewFout.hidden = true;
+    el.btnProbeerOpnieuw.hidden = true;
   }
 
   function compileerEnValideer() {
