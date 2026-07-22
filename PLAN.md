@@ -87,14 +87,28 @@ terug.
 ## Stap 5 — Interviewlaag (nu pas het model)
 
 De site praat met het doorgeefluik. Interviewlogica: naamstap, drie
-technieken met techniek-eigen stops, de 10-per-vraag-teller,
+technieken met techniek-eigen stops, de rondegrens per vraag,
 destillatie-en-voorleggen, confrontatie in gewone taal, ondernemer beslist.
 Modelkeuze als configuratie op het luik. Noodrem: 2500 beurten totaal
 (SPEC.md §10) — zuiver een loop-stopper, moet in een normaal interview
 nooit geraakt worden.
 
-**Bewijs:** één kort echt testinterview door Rob, extern op een laptop;
-uitvoer door de validator.
+**Herzien tijdens de bouwsessie (deel 2):** de vaste 10-per-vraag-teller is
+verfijnd naar een drietraps opbouw (waarschuwing ronde 8, destillatie
+ronde 10, afsluiten met GEEN-DEKKING ronde 12) — zie SPEC.md §2 punt 5.
+De teller rekent uitsluitend met beurttypen die de validator van deel 1 al
+goedkeurt, nooit met een oordeel van het model zelf.
+
+Deelstappen, elk met eigen bewijs:
+1. Protocol + validator voor modelantwoorden (deel 1) — **klaar**.
+2. Rondeteller en drietraps statusbepaling (deel 2) — **klaar**, bewijs:
+   `npm test` groen met de nieuwe tellermodule-tests.
+3. Live verbinding: chatvenster ↔ doorgeefluik ↔ controller — nog te doen.
+4. Destillatie/confrontatie end-to-end tot en met compileren en
+   valideren — nog te doen.
+
+**Bewijs (eindstap):** één kort echt testinterview door Rob, extern op een
+laptop; uitvoer door de validator.
 
 ## Stap 6 — Volledige doorlopen
 

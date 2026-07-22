@@ -33,11 +33,24 @@ uitvoer oplevert die door de validator komt.
    (laddering tot een terminale waarde; CDM na zijn sweeps; exception
    probing tot de grens van de regel gevonden is) — nooit een vast aantal
    vragen.
-5. **Verduidelijkingsgrens:** per interviewvraag maximaal 10
-   verduidelijkingsrondes (confrontatierondes tellen mee). Daarna
-   destilleert het systeem uit die rondes de beste lezing en legt die
-   expliciet voor: *"Dit maak ik ervan — klopt dit?"* De ondernemer
-   bevestigt, past aan, of laat het punt open.
+5. **Verduidelijkingsgrens:** per interviewvraag een drietraps opbouw,
+   herzien tijdens de bouwsessie van Stap 5 (deel 2) — bewust niet één
+   harde afkap, maar een oplopende grens (confrontatierondes tellen overal
+   in mee):
+   - **Ronde 8:** vaste waarschuwing dat de grens nadert, met de suggestie
+     het antwoord eerst aan te scherpen voordat het gesprek verdergaat.
+   - **Ronde 10:** het systeem destilleert de beste lezing uit de rondes
+     tot dusver en legt die expliciet voor: *"Dit maak ik ervan — klopt
+     dit?"* De ondernemer bevestigt, past aan, of laat het bewust open.
+   - **Ronde 12:** is het punt dan nog niet afgerond, dan sluit het
+     systeem af met een vaste dankbetuiging en legt het vast als
+     GEEN-DEKKING — dit komt vanzelf terug in
+     `open_onderwerpen_trainingbot_<naam>.md` (§4 punt 7), de
+     trainingsagenda van de digitale werknemer.
+
+   De rondeteller is deterministisch en client-side: hij telt
+   interviewer-dialoogbeurten sinds de laatste `taak`- of `edge`-extractie
+   — nooit een oordeel van het model zelf over wat "een nieuwe vraag" is.
 6. **Tegenstrijdigheid:** wordt in gewone taal benoemd ("U zei eerder X, nu
    Y — wat klopt?"). De ondernemer beslist altijd. Kiest hij niet, dan
    blijft het punt bewust open (GEEN-DEKKING).
