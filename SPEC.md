@@ -51,8 +51,8 @@ uitvoer oplevert die door de validator komt.
 |---|---|---|
 | Interview | **ja — de enige** | gespreksvoering, naamstap, technieken, destillatie, confrontatie |
 | Compiler | nee | transcript → alle uitvoerbestanden; zelfde transcript = byte-gelijke uitvoer |
-| Validator | nee | schema, herleidbaarheid (`source_turns`), dekkingslabels |
-| Doorgeefluik | nee | toegangscode controleren, gesprek doorsturen naar OpenRouter, niets bewaren |
+| Validator | nee | schema, herleidbaarheid (`source_turns`), dekkingslabels, graafconsistentie (edges verwijzen naar bestaande taken, geen cykels) |
+| Doorgeefluik | nee | toegangscode controleren, gesprek doorsturen naar de geconfigureerde provider, niets bewaren |
 
 De validator toetst **vorm en herleidbaarheid**, niet inhoudelijke
 juistheid. Inhoudelijke juistheid keurt de ondernemer: tijdens het interview
@@ -64,7 +64,7 @@ UTF-8, afsluitende newline) en krijgt klok en interview-id aangeleverd, zodat
 golden tests byte-gelijk kunnen zijn. De werknemersnaam komt uit het
 transcript en is daarmee deterministisch.
 
-## 4. De uitvoer: zes bestanden plus het bronbestand
+## 4. De uitvoer: zeven bestanden plus het bronbestand
 
 `<naam>` is de gekozen werknemersnaam, in kleine letters.
 
@@ -100,22 +100,59 @@ transcript en is daarmee deterministisch.
    misgaan (faalgevolgen uit het interview). Dekkingslabels zichtbaar,
    printbaar, met leeswijzer naar de andere vijf bestanden.
 
+7. **`open_onderwerpen_trainingbot_<naam>.md`** — **(toegevoegd tijdens de
+   bouwsessie, op Robs instructie)** een expliciete lijst van elke taak en
+   edge met dekking **GEEN-DEKKING**: waar (welke beurt), waarom bewust open
+   gelaten, en wat ervan afhangt (gekoppelde taken/edges via `edges` en
+   `afhankelijk_van`). Dit is stap 1 van de trainingsagenda van de digitale
+   werknemer zelf — vergelijkbaar met een net afgestudeerde junior die de
+   theorie kent en nu de praktijklacunes moet invullen. Doel na oplevering:
+   binnen drie maanden operationeel gebruik zijn deze lacunes dicht.
+   **Geen aparte validatorcategorie nodig:** dit bestand wordt door de
+   compiler berekend uit exact dezelfde manifestgegevens die de validator al
+   controleert (welke taken/edges op GEEN-DEKKING staan) — het kan dus per
+   ontwerp niet uit de pas lopen met het manifest. Getest via golden output
+   plus losse eenheidstests (`test/buildOpenOnderwerpen.test.js`).
+
 Plus, altijd: **`transcript.json`** — het volledige interview, beurt voor
 beurt genummerd. Verplicht onderdeel van de uitvoer: alle `source_turns`
 verwijzen hiernaar; zonder transcript is herleidbaarheid een dode letter.
 
-## 5. LLM-laag: één adapter, via OpenRouter
+## 5. LLM-laag: provider-agnostisch, meerdere adapters
 
-- Robs sleutel is een OpenRouter-sleutel. OpenRouter biedt één
-  OpenAI-compatibel endpoint (`https://openrouter.ai/api/v1`) met één
-  sleutel voor honderden modellen van meerdere aanbieders; het model wordt
-  per aanroep gekozen via de modelnaam (bron: openrouter.ai-documentatie
-  en -blog).
-- Daarmee is "agnostisch" één adapter: modelwissel is een
-  configuratieregel op het doorgeefluik, geen code.
-- De sleutel bestaat uitsluitend op de doorgeefluik-machine, in `.env`,
+**Herzien tijdens de bouwsessie van Stap 4 (deel 3):** oorspronkelijk was
+"agnostisch" hier gedefinieerd als één adapter via OpenRouter (modelwissel
+als configuratieregel, geen code). Op Robs expliciete instructie is dit
+verbreed naar echte provider-onafhankelijkheid: het doorgeefluik moet ook
+kunnen doorwerken als OpenRouter zelf uitvalt of blokkeert. Dat vraagt een
+adapter per provider, niet enkel een modelnaam-parameter op één adapter.
+
+- **Eén gemeenschappelijk contract:** elke adapter accepteert dezelfde
+  invoer (OpenAI-stijl `messages`: `[{role, content}]`, plus `model` en
+  `apiKeys`) en levert dezelfde uitvoer (`{content: "..."}`). De aanroeper
+  (site/interviewlaag) hoeft niet te weten welke provider antwoordde.
+- **`PROVIDER`** kiest de actieve adapter (`openrouter` of `google`) — puur
+  configuratie op het doorgeefluik.
+- **OpenRouter-adapter:** OpenAI-compatibel endpoint
+  (`https://openrouter.ai/api/v1`), één sleutel voor honderden modellen van
+  meerdere aanbieders; modelwissel blijft configuratie (bron:
+  openrouter.ai-documentatie en -blog).
+- **Google-adapter:** rechtstreeks naar de Gemini Developer API
+  (`https://generativelanguage.googleapis.com`), sleutel als
+  `?key=`-query-parameter. Vertaalt `messages` naar Google's
+  `contents`/`systemInstruction`-formaat.
+- **Meerdere sleutels per provider (toegevoegd tijdens de bouwsessie van
+  Stap 4):** elke adapter accepteert een komma-gescheiden lijst van
+  sleutels (`OPENROUTER_API_KEYS` resp. `GOOGLE_API_KEYS`) — de eerste is
+  primair, de rest zijn backups. Bij een sleutel-gerelateerde fout
+  (401/403/429) of een netwerkfout probeert het doorgeefluik automatisch de
+  volgende sleutel. Bij een andere fout (bijvoorbeeld een ongeldig verzoek,
+  400) wordt niet opnieuw geprobeerd, want een andere sleutel lost dat niet
+  op.
+- De sleutel(s) bestaan uitsluitend op de doorgeefluik-machine, in `.env`,
   door Rob zelf ingevuld. Nooit in de site, de repo, de CI of een chat.
-- Welk model milestone 1 gebruikt: configuratie; Rob kiest en kan wisselen.
+- Welk model en welke provider milestone 1 gebruikt: configuratie; Rob
+  kiest en kan wisselen.
 
 ## 6. BESLUIT — sleutelarchitectuur: B, op Robs eigen pc
 
@@ -128,8 +165,8 @@ verwijzen hiernaar; zonder transcript is herleidbaarheid een dode letter.
   verifieert de bouwsessie tegen de actuele documentatie — hier bewust niet
   uit het hoofd voorgeschreven.
 - Gedrag van het doorgeefluik: toegangscode controleren → gesprek
-  doorsturen naar OpenRouter → antwoord terug. Het bewaart niets: geen
-  gespreksinhoud in logs.
+  doorsturen naar de geconfigureerde provider (§5) → antwoord terug. Het
+  bewaart niets: geen gespreksinhoud in logs.
 - **Toegangscodes:** Rob maakt ze aan en trekt ze in, in één bestand op de
   doorgeefluik-machine. Rob stuurt testers zelf hun code.
 - Consequentie, bewust aanvaard: staat de pc uit of herstart hij, dan is
@@ -156,11 +193,13 @@ verwijzen hiernaar; zonder transcript is herleidbaarheid een dode letter.
    **alle uitvoerbestanden** byte-gelijk met `tests/golden/` — geen LLM.
 3. Validator-afkeurset: manifesten met bekende fouten (ontbrekende
    `source_turns`, onbekend veld, ongeldig label, verwijzing naar
-   niet-bestaande beurt, ongeldig autonomieniveau) worden elk afgekeurd met
+   niet-bestaande beurt, ongeldig autonomieniveau, edge naar een
+   niet-bestaande taak, cyclische afhankelijkheid) worden elk afgekeurd met
    reden, gerapporteerd per categorie.
 4. Gitleaks: nul bevindingen op werkboom en historie.
 5. Doorgeefluik-test: aanroep zonder geldige code wordt geweigerd; met code
-   komt er antwoord van OpenRouter terug (curl-bewijs, letterlijke uitvoer).
+   komt er antwoord van de geconfigureerde provider terug (curl-bewijs,
+   letterlijke uitvoer, voor elke aangesloten provider).
 6. Rob doorloopt extern, op een laptop, via de live site een volledig echt
    interview; alle uitvoer passeert de validator.
 7. De externe GitHub-tester doet hetzelfde, met alleen de README en zijn
@@ -183,12 +222,18 @@ optie B als nieuwbouw vanaf de publieke bronnen erin.
 - **Dataminimalisatie als ontwerpprincipe:** niets wordt opgeslagen; het
   doorgeefluik logt geen gespreksinhoud; de ondernemer downloadt zelf.
 - **Eerlijk benoemd:** "AVG-proof" richting echte klanten vraagt later
-  meer dan dit — verwerkersrelatie met OpenRouter en de onderliggende
-  modelaanbieders, een privacyverklaring op de site, en het nalopen van
-  OpenRouters retentie-instellingen. Dat is milestone 2-werk; het staat
+  meer dan dit — verwerkersrelatie met elke aangesloten provider (§5) en de
+  onderliggende modelaanbieders, een privacyverklaring op de site, en het
+  nalopen van hun retentie-instellingen. Dat is milestone 2-werk; het staat
   hier zodat het niet zoekraakt.
-- Geen globaal beurtenplafond; alleen de 10-per-vraag-grens en de
-  techniek-eigen stops.
+- Geen inhoudelijk beurtenplafond dat het interview vroegtijdig afkapt —
+  diepte volgt de 10-per-vraag-grens en de techniek-eigen stops. Wel een
+  technische **noodrem van 2500 beurten totaal** (vastgelegd tijdens de
+  bouwsessie), zuiver als vangnet tegen doorlussen (een bug, geen normaal
+  gebruik): een realistisch complexe MKB-zaak (10 domeinen × ~15 items,
+  elk in het slechtste geval tot de 10-per-vraag-grens) blijft ruim onder
+  de 1500 beurten; 2500 ligt daar met marge boven, zodat de noodrem alleen
+  bij een defect gesprek triggert, nooit bij een grondig interview.
 - Een door de ondernemer bevestigde destillatie is GEDEKT, met de
   bevestigingsbeurt als bron. Afgewezen zonder alternatief = GEEN-DEKKING.
 - ZIEL volgt een vaste sectiestructuur in de geest van het oude

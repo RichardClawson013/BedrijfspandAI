@@ -41,7 +41,8 @@ juistheid keurt Rob bij oplevering.
   het architectuurinzicht, de bevestiging dat de aanpak werkt — nooit de
   letterlijke code of data. Dit project bouwt vanaf nul.
 - Sleutels bestaan uitsluitend op de doorgeefluik-machine, in
-  `relay/.env` (OPENROUTER_API_KEY), door Rob zelf ingevuld. Nooit een
+  `relay/.env` (`OPENROUTER_API_KEYS` resp. `GOOGLE_API_KEYS`, afhankelijk
+  van `PROVIDER` — zie SPEC.md §5), door Rob zelf ingevuld. Nooit een
   sleutel in de site, de repo, de CI of de chat. Toegangscodes voor
   testers beheert Rob in één bestand op het doorgeefluik.
 
@@ -59,10 +60,9 @@ juistheid keurt Rob bij oplevering.
 
 Diepte per techniek wordt bepaald door het eigen stopcriterium van die
 techniek, nooit door een vast aantal vragen. Naast dat techniek-eigen
-stopcriterium geldt een harde bovengrens als noodrem — een maximumaantal
-beurten of tijd, exacte waarde vast te leggen in SPEC.md tijdens de
-specificatiesessie — zodat looptijd en kosten begrensd blijven bij een
-ondernemer die blijft doorpraten.
+stopcriterium geldt een harde bovengrens als noodrem, zuiver als vangnet
+tegen doorlussen (nooit als sturing van een normaal interview) — **2500
+beurten totaal**, vastgelegd in SPEC.md §10 tijdens de bouwsessie.
 
 ## Bronnen voor domeinkennis
 
