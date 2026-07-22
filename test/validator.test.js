@@ -25,6 +25,8 @@ const afkeurset = [
   ["ongeldig-label.json", "ongeldig-label"],
   ["niet-bestaande-beurt.json", "niet-bestaande-beurt"],
   ["ongeldig-autonomieniveau.json", "ongeldig-autonomieniveau"],
+  ["edge-naar-onbestaande-taak.json", "onbestaande-taak-referentie"],
+  ["cyclische-afhankelijkheid.json", "cyclische-afhankelijkheid"],
 ];
 
 for (const [bestand, verwachteCategorie] of afkeurset) {

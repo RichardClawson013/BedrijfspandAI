@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-07-21T14:00:00Z",
+  "werknemer": { "naam": "nova" },
+  "interview": {
+    "id": "iv-20260721-001",
+    "turns_total": 15,
+    "provider": "openrouter",
+    "model": "voorbeeld/modelnaam"
+  },
+  "tasks": [
+    { "id": "T-0001", "naam": "Factuur versturen", "dekking": "GEDEKT", "source_turns": [1] }
+  ],
+  "edges": [
+    { "van": "T-0001", "naar": "T-9999", "dekking": "GEDEKT", "source_turns": [1] }
+  ]
+}
