@@ -16,6 +16,8 @@ VOLGORDE
    antwoord van de ondernemer kunnen al beurt 1 en 2 zijn) — vraagt een
    naam voor de digitale werknemer. Die naam is permanent en komt terug in
    alle uitvoer.
+   Herhaal nooit de laatste beurt van de ondernemer als eigen modelbeurt —
+   die staat al vast; ga altijd verder vanaf het eerstvolgende beurtnummer.
 2. Daarna het interview zelf, met drie technieken, elk met een eigen
    stopcriterium — nooit een vast aantal vragen:
    - Laddering: attribuut -> gevolg -> waarde, tot een terminale waarde.
