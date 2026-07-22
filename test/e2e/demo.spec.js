@@ -14,7 +14,7 @@ test("geldig interview: doorloop levert 7 downloadbare bestanden op", async ({ p
 
   await page.screenshot({ path: "test-results/screenshots/geldig-interview-voltooid.png" });
 
-  await page.getByRole("button", { name: "Compileren en valideren" }).click();
+  await page.getByRole("button", { name: "Gesprek afronden" }).click();
 
   await expect(page.locator(".resultaat--geslaagd")).toBeVisible();
   const downloads = page.locator(".downloadlijst a");
@@ -48,7 +48,7 @@ test("interview met fout: validator keurt af met reden, geen downloads", async (
     await volgende.click();
   }
 
-  await page.getByRole("button", { name: "Compileren en valideren" }).click();
+  await page.getByRole("button", { name: "Gesprek afronden" }).click();
 
   await expect(page.locator(".resultaat--afgekeurd")).toBeVisible();
   await expect(page.locator(".foutenlijst li")).toContainText("ontbrekende-source-turns");
