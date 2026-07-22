@@ -24,15 +24,33 @@ uitvoer oplevert die door de validator komt.
 
 ## 2. Wat de bezoeker meemaakt
 
-1. Opent de site, voert een toegangscode in (door Rob uitgegeven).
-2. Korte uitleg in gewone taal, startknop.
-3. **Naamstap:** de eerste interviewstap is het kiezen van een naam voor de
+**Herzien tijdens de bouwsessie (Stap 5, deelstap 4):** de toegangscode en
+de intro zijn omgezet van een statisch formulier naar gesprekswijze — zie
+de punten hieronder.
+
+1. Opent de site. De assistent vraagt in gesprekswijze om de toegangscode
+   (door Rob uitgegeven) — geen los formulierveld met technisch label.
+2. **Welkomsbericht (beurt 1, vast, niet modelgegenereerd):** na een
+   geldige code toont de site een vaste openingszin van de assistent, die
+   vraagt wie de ondernemer is, wat zijn bedrijf doet, en waarom hij denkt
+   dat AI hem zou kunnen helpen — een open ijsbreker, geen drilvraag. Dit
+   bericht en het antwoord van de ondernemer zijn **echte, genummerde
+   transcriptbeurten** (beurt 1 = vast welkomsbericht van de interviewer,
+   beurt 2 = vrij antwoord van de ondernemer) — herleidbaar en bruikbaar
+   als bron, net als elke andere beurt. Reden: het antwoord is inhoud, geen
+   versiering; zonder beurtnummer zou het niet citeerbaar zijn, in strijd
+   met de herleidbaarheidseis elders in dit document.
+3. **Naamstap:** de eerste **modelgegenereerde** beurt — dus ná het vaste
+   welkomsbericht en het antwoord van de ondernemer, niet meer letterlijk
+   beurt 1 van het transcript — is het kiezen van een naam voor de
    digitale werknemer. De naam is permanent en verschijnt in alle
    bestandsnamen en teksten.
 4. Het interview. Drie technieken, elk met een eigen stopcriterium
    (laddering tot een terminale waarde; CDM na zijn sweeps; exception
    probing tot de grens van de regel gevonden is) — nooit een vast aantal
-   vragen.
+   vragen. **Toon:** nieuwsgierig en volgend, niet drillend — de
+   technieken dienen om de denkwijze van de ondernemer te leren kennen,
+   niet om te verhoren.
 5. **Verduidelijkingsgrens:** per interviewvraag een drietraps opbouw,
    herzien tijdens de bouwsessie van Stap 5 (deel 2) — bewust niet één
    harde afkap, maar een oplopende grens (confrontatierondes tellen overal
@@ -185,6 +203,15 @@ adapter per provider, niet enkel een modelnaam-parameter op één adapter.
 - Consequentie, bewust aanvaard: staat de pc uit of herstart hij, dan is
   het interview onbereikbaar. De site zelf blijft staan en toont dan een
   nette melding.
+- **Bètafase, tijdelijk (toegevoegd tijdens de bouwsessie, Stap 5 deelstap
+  4):** tot de permanente tunnel/domein-oplossing er is (Stap 4, punt 4 —
+  Cloudflare-account/domein, nog te doen), draait een **Cloudflare Quick
+  Tunnel** (`cloudflared tunnel --url`, geen account nodig). Het adres
+  daarvan verandert bij elke herstart. Voor de bètatest staat dit adres
+  **vast gecodeerd op één plek** in de site (geen zichtbaar invoerveld voor
+  de tester) — dit moet dus handmatig bijgewerkt en opnieuw gepusht worden
+  bij elke herstart van de tunnel, tot de permanente oplossing dit
+  overbodig maakt.
 
 ## 7. Repo-inrichting
 

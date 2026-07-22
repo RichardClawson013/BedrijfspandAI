@@ -7,6 +7,17 @@ import { vraagModelBeurt } from "../interview/interviewClient.js";
 
 const DEMOS = { geldig: demoGeldig, fout: demoFout };
 
+// Bètafase (Stap 5, deelstap 4, SPEC.md §6): tijdelijk hardcoded, tot de
+// permanente tunnel/domein-oplossing er is. Bij elke herstart van de
+// Cloudflare Quick Tunnel moet dit adres hier bijgewerkt en opnieuw
+// gepusht worden.
+const RELAY_API_URL = "https://fitness-bowl-startup-preliminary.trycloudflare.com/interview";
+
+// Vast welkomsbericht (SPEC.md §2 punt 2) — geen model-uitvoer, altijd
+// transcriptbeurt 1.
+const WELKOMSBERICHT =
+  "Hi, Ik ben de Assistent van DakanAI, leuk dat je de tijd neemt om met me in gesprek te gaan. Vertel me, wie ben jij? Wat doet je bedrijf, en waarom denk je dat AI je zou kunnen helpen?";
+
 const FOUTMELDINGEN = {
   "doorgeefluik-onbereikbaar":
     "Het doorgeefluik is niet bereikbaar. Controleer of het draait en probeer het opnieuw.",
@@ -23,7 +34,7 @@ function els() {
     schermResultaat: document.getElementById("scherm-resultaat"),
     formCode: document.getElementById("form-code"),
     inputCode: document.getElementById("input-code"),
-    inputApi: document.getElementById("input-api"),
+    codeGesprek: document.getElementById("code-gesprek"),
     btnDemo: document.getElementById("btn-demo"),
     demoKnoppen: document.querySelectorAll("[data-demo]"),
     interviewNaam: document.getElementById("interview-naam"),
@@ -50,12 +61,19 @@ export function initApp() {
 
   const state = { modus: "demo", transcript: [], turnIndex: 0, wisselingen: [] };
 
+  el.codeGesprek.append(
+    renderTurn({
+      type: "dialoog",
+      spreker: "interviewer",
+      tekst: "Hoi! Fijn dat je er bent. Heb je een toegangscode? Vul 'm hieronder in om te beginnen.",
+    }),
+  );
+
   el.formCode.addEventListener("submit", (event) => {
     event.preventDefault();
     const code = el.inputCode.value.trim();
-    const apiUrl = el.inputApi.value.trim();
     if (code) {
-      startEchteInterview(code, apiUrl);
+      startEchteInterview(code);
     } else {
       toonScherm(el.schermIntro, alleSchermen);
     }
@@ -113,10 +131,10 @@ export function initApp() {
     }
   }
 
-  function startEchteInterview(code, apiUrl) {
+  function startEchteInterview(code) {
     state.modus = "echt";
     state.code = code;
-    state.apiUrl = apiUrl;
+    state.apiUrl = RELAY_API_URL;
     state.transcript = [];
     state.wisselingen = [];
     state.provider = undefined;
@@ -130,7 +148,17 @@ export function initApp() {
     el.formAntwoord.hidden = false;
 
     toonScherm(el.schermInterview, alleSchermen);
-    haalVolgendeModelBeurtOp();
+
+    // Welkomsbericht is vast (geen model-uitvoer) en altijd beurt 1
+    // (SPEC.md §2 punt 2). Het antwoord van de ondernemer wordt beurt 2
+    // via het normale antwoordformulier — pas daarna gaat de eerste echte
+    // modelaanroep uit.
+    const welkomstBeurt = { turn: 1, type: "dialoog", spreker: "interviewer", tekst: WELKOMSBERICHT };
+    state.transcript.push(welkomstBeurt);
+    el.transcriptLog.append(renderTurn(welkomstBeurt));
+    state.wisselingen.push({ rol: "model", inhoud: JSON.stringify([welkomstBeurt]) });
+
+    zetAntwoordveldActief(true);
   }
 
   function verstuurAntwoord() {

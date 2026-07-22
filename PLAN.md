@@ -103,8 +103,19 @@ Deelstappen, elk met eigen bewijs:
 1. Protocol + validator voor modelantwoorden (deel 1) — **klaar**.
 2. Rondeteller en drietraps statusbepaling (deel 2) — **klaar**, bewijs:
    `npm test` groen met de nieuwe tellermodule-tests.
-3. Live verbinding: chatvenster ↔ doorgeefluik ↔ controller — nog te doen.
-4. Destillatie/confrontatie end-to-end tot en met compileren en
+3. Live verbinding: chatvenster ↔ doorgeefluik ↔ controller — **klaar**,
+   bewijs: 87/87 tests groen, live testgesprek bevestigd door Rob via
+   Cloudflare Quick Tunnel (`/gezond` en een echt Google/Gemini-antwoord).
+4. **(nieuw, tijdens de bouwsessie)** Gesprekswijze onboarding: toegangscode
+   in gesprekstoon vragen i.p.v. los formulierveld; vast welkomsbericht
+   (beurt 1) + antwoord ondernemer (beurt 2) als echte transcriptbeurten
+   vóór de naamstap; toon-instructie in het protocol tegen drillende
+   vervolgvragen; doorgeefluik-adres vast gecodeerd voor de bètafase i.p.v.
+   zichtbaar veld — zie SPEC.md §2 en §6. **Nog te doen.**
+   **Bewijs:** `npm test` groen; Rob bevestigt in de browser dat het
+   welkomsbericht en de gesprekswijze code-vraag werken zoals hier
+   beschreven.
+5. Destillatie/confrontatie end-to-end tot en met compileren en
    valideren — nog te doen.
 
 **Bewijs (eindstap):** één kort echt testinterview door Rob, extern op een
