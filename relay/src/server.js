@@ -74,7 +74,7 @@ export function maakServer({
 
     try {
       const antwoord = await stuurNaarProvider({ messages, apiKeys, model, fetchImpl });
-      res.status(200).json(antwoord);
+      res.status(200).json({ ...antwoord, provider, model });
     } catch {
       res.status(502).json({ error: `doorsturen naar ${provider} is mislukt` });
     }

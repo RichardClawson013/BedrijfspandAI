@@ -265,6 +265,39 @@ test("POST /interview met provider=google stuurt door naar Google en geeft het a
   }
 });
 
+test("POST /interview geeft provider en model mee terug, naast content", async () => {
+  const { bestand, dir } = maakCodesBestand(["geldige-code"]);
+  const fetchImpl = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({ candidates: [{ content: { parts: [{ text: "hallo" }] } }] }),
+  });
+
+  const app = maakServer({
+    codesPath: bestand,
+    provider: "google",
+    apiKeys: ["google-test-sleutel"],
+    model: "gemini-2.5-flash",
+    fetchImpl,
+  });
+  const { server, basisUrl } = await starteServer(app);
+
+  try {
+    const res = await fetch(`${basisUrl}/interview`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "geldige-code", messages: [{ role: "user", content: "hoi" }] }),
+    });
+
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.deepEqual(data, { content: "hallo", provider: "google", model: "gemini-2.5-flash" });
+  } finally {
+    server.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test("maakServer gooit een fout bij een onbekende provider", () => {
   assert.throws(() => {
     maakServer({ codesPath: "onbelangrijk.json", provider: "onbekend", apiKeys: ["x"], model: "y" });
