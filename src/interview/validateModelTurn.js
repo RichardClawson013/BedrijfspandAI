@@ -6,6 +6,7 @@ const BEURTTYPEN = new Set([
   "ziel_principe",
   "skill",
   "tool",
+  "afronding",
 ]);
 
 const DEKKINGSLABELS = new Set(["GEDEKT", "AFGELEID", "GEEN-DEKKING"]);
@@ -59,6 +60,13 @@ function valideerNaamstap(beurt, errors) {
     voegFoutToe(errors, "ontbrekend-veld", "naamstap: naam ontbreekt of is leeg");
   }
 }
+
+/**
+ * Puur signaal dat het model, na expliciete bevestiging van de ondernemer
+ * (SPEC.md §2 punt 7), het interview als voldoende beschouwt. Geen extra
+ * velden nodig — turn en type zijn al gecontroleerd door valideerBeurt.
+ */
+function valideerAfronding() {}
 
 function valideerDialoog(beurt, errors) {
   const context = `dialoog beurt ${beurt.turn}`;
@@ -136,6 +144,7 @@ const VALIDATORS_PER_TYPE = {
   ziel_principe: valideerZielPrincipe,
   skill: valideerSkill,
   tool: valideerTool,
+  afronding: valideerAfronding,
 };
 
 function valideerBeurt(beurt, errors) {

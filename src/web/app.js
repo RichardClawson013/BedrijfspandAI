@@ -209,15 +209,25 @@ export function initApp() {
     state.model = resultaat.model;
     state.wisselingen.push({ rol: "model", inhoud: resultaat.ruweTekst });
 
+    let afgerond = false;
     for (const beurt of resultaat.beurten) {
       state.transcript.push(beurt);
       el.transcriptLog.append(renderTurn(beurt));
       if (beurt.type === "naamstap") {
         el.interviewNaam.textContent = `— ${beurt.naam}`;
       }
+      if (beurt.type === "afronding") {
+        afgerond = true;
+      }
     }
 
-    el.btnCompileer.hidden = false;
+    // Het model beslist zelf wanneer het klaar is (SPEC.md §2 punt 7) —
+    // geen handmatige knop meer in de echte interviewmodus.
+    if (afgerond) {
+      compileerEnValideer();
+      return;
+    }
+
     zetAntwoordveldActief(true);
   }
 
@@ -250,7 +260,20 @@ export function initApp() {
             model: "geen — dit is een afgespeeld transcript, geen live interview",
           };
 
-    const uitvoer = compile(state.transcript, meta);
+    // Nooit stil falen (CLAUDE.md: "rood is niet af") — compile() gooit
+    // een fout bij een structureel kapot transcript; die moet zichtbaar
+    // worden, niet verdwijnen in een onopgevangen browserfout.
+    let uitvoer;
+    try {
+      uitvoer = compile(state.transcript, meta);
+    } catch (fout) {
+      el.resultaatInhoud.replaceChildren(
+        renderAfkeuring([{ category: "compilatiefout", message: fout.message }]),
+      );
+      toonScherm(el.schermResultaat, alleSchermen);
+      return;
+    }
+
     const manifestBestand = Object.keys(uitvoer).find((f) => f.startsWith("wereldmodel_"));
     const manifest = JSON.parse(uitvoer[manifestBestand]);
     const resultaat = validateManifest(manifest, state.transcript);

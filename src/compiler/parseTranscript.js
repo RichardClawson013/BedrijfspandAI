@@ -3,13 +3,16 @@ export function parseTranscript(transcript) {
     throw new Error("transcript moet een niet-lege array zijn");
   }
 
-  const eerste = transcript[0];
-  if (eerste.turn !== 1 || eerste.type !== "naamstap") {
-    throw new Error('beurt 1 moet de naamstap zijn (type: "naamstap", turn: 1)');
+  // Sinds Stap 5 deelstap 4 is beurt 1 het vaste welkomsbericht, niet meer
+  // per definitie de naamstap (SPEC.md §2 punt 2/3) — de naamstap wordt
+  // dus op positie gezocht, niet aangenomen op transcript[0].
+  const naamstap = transcript.find((beurt) => beurt.type === "naamstap");
+  if (!naamstap) {
+    throw new Error('transcript moet een beurt met type "naamstap" bevatten');
   }
 
   const parsed = {
-    naam: eerste.naam,
+    naam: naamstap.naam,
     taken: [],
     edges: [],
     zielPrincipes: [],
@@ -21,6 +24,7 @@ export function parseTranscript(transcript) {
     switch (beurt.type) {
       case "naamstap":
       case "dialoog":
+      case "afronding":
         break;
       case "taak":
         parsed.taken.push(beurt.data);

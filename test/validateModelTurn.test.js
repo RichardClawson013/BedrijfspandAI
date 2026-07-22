@@ -39,12 +39,19 @@ test("geldige beurten van alle typen worden geaccepteerd", () => {
       type: "tool",
       data: { naam: "Excel", taak_id: "T-0001", soort: "huidig", dekking: "GEDEKT", source_turns: [3] },
     },
+    { turn: 9, type: "afronding" },
   ]);
 
   const result = parseModelResponse(raw);
   assert.equal(result.valid, true);
   assert.deepEqual(result.errors, []);
-  assert.equal(result.turns.length, 8);
+  assert.equal(result.turns.length, 9);
+});
+
+test("een afronding-beurt heeft geen extra velden nodig", () => {
+  const raw = JSON.stringify([{ turn: 1, type: "afronding" }]);
+  const result = parseModelResponse(raw);
+  assert.equal(result.valid, true);
 });
 
 test("een GEEN-DEKKING beurt met source_turns naar het onderwerp is geldig, ook zonder verdere inhoud", () => {

@@ -85,9 +85,22 @@ de punten hieronder.
 6. **Tegenstrijdigheid:** wordt in gewone taal benoemd ("U zei eerder X, nu
    Y — wat klopt?"). De ondernemer beslist altijd. Kiest hij niet, dan
    blijft het punt bewust open (GEEN-DEKKING).
-7. Afronden: compileren, valideren, downloadknoppen voor alle bestanden.
-   Keurt de validator af, dan toont de site wat er ontbreekt — er wordt
-   nooit stil gerepareerd of opgevuld.
+7. **Afronden (herzien tijdens de bouwsessie, Stap 5 deelstap 5): het
+   model beslist, niet een handmatige knop.** Vindt het model dat het
+   voldoende heeft voor een goed fundament, dan vraagt het dat eerst
+   expliciet aan de ondernemer als gewone dialoogbeurt — bijvoorbeeld "Ik
+   denk dat ik voldoende heb. Wil je nog iets toevoegen, of mag ik
+   afronden?" — nooit in één beweging zelf beslissen en stoppen. Bevestigt
+   de ondernemer, dan geeft het model op de eerstvolgende beurt een vast
+   `afronding`-signaal af (nieuw beurttype, geen extra velden nodig) samen
+   met een kort afscheidsbericht. De site compileert en valideert dan
+   automatisch — geen handmatige knop meer in de echte interviewmodus. Wil
+   de ondernemer nog iets toevoegen, dan gaat het gesprek gewoon door;
+   er is geen aparte afhandeling nodig, dat is al hoe een normale beurt
+   werkt.
+   Compileren, valideren, downloadknoppen voor alle bestanden. Keurt de
+   validator af, dan toont de site wat er ontbreekt — er wordt nooit stil
+   gerepareerd of opgevuld.
 
 ## 3. De lagen en de determinismegrens
 

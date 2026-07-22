@@ -57,6 +57,12 @@ export function renderTurn(beurt) {
     }
     case "dialoog":
       return renderDialoog(beurt);
+    case "afronding": {
+      const el = document.createElement("article");
+      el.className = "extractie extractie--naamstap";
+      el.textContent = "Interview afgerond — bezig met compileren en valideren...";
+      return el;
+    }
     case "taak":
       return renderExtractie(`Taak vastgelegd: ${beurt.data.naam}`, beurt.data.beschrijving ?? "(geen beschrijving)", beurt.data);
     case "edge":

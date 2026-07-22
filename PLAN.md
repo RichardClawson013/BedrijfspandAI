@@ -123,13 +123,28 @@ Deelstappen, elk met eigen bewijs:
      bewijs: golden fixtures opnieuw gegenereerd en byte-gelijk, 87/87
      tests groen.
    - **Gracieus herstellen bij ongeldig modelantwoord** (zie SPEC.md §2
-     punt 4) — vervangt "hard stoppen na 2 herstelpogingen". **Nog te
-     doen.**
+     punt 4) — vervangt "hard stoppen na 2 herstelpogingen". **Klaar**,
+     bewijs: 88/88 tests groen (2 nieuwe gevallen).
    **Bewijs (eindstap):** `npm test` groen; Rob bevestigt in de browser
    dat het welkomsbericht, de huisstijl en de gesprekswijze code-vraag
    werken zoals hier beschreven.
-5. Destillatie/confrontatie end-to-end tot en met compileren en
-   valideren — nog te doen.
+5. Model-gedreven afronden (zie SPEC.md §2 punt 7) — ontdekt via Robs
+   eigen bètatest: een volledig interview leverde geen uitvoer op, omdat
+   niets het model liet beslissen "ik ben klaar." Bewuste keuze: het model
+   beslist, maar vraagt eerst expliciet bevestiging aan de ondernemer voor
+   het echt afrondt — nooit zelf in één beweging stoppen zonder dat iemand
+   kan bijsturen. Bevestigt de ondernemer, dan geeft het model een vast
+   `afronding`-signaal af; de site compileert en valideert dan automatisch
+   — geen handmatige "Gesprek afronden"-knop meer in de echte
+   interviewmodus (demo-modus behoudt de knop, daar is geen levend model).
+   **Nog te doen.**
+   Rob expliciet: "het fundament leggen is genoeg, uitbouwen kan later
+   nog" — dit blijft dus bewust beperkt tot het afrondingssignaal zelf.
+   **De 8/10/12-rondeteller (`interviewStatus.js`) live aansluiten op het
+   gesprek blijft apart openstaan, geen onderdeel van deze deelstap.**
+   **Bewijs:** `npm test` groen; Rob bevestigt in de browser dat een
+   compleet interview automatisch naar het resultaatscherm gaat na zijn
+   bevestiging, zonder handmatige knop.
 
 **Bewijs (eindstap):** één kort echt testinterview door Rob, extern op een
 laptop; uitvoer door de validator.
