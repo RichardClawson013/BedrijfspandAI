@@ -178,6 +178,39 @@ test("een taak met een ongeldig autonomieniveau wordt afgekeurd", () => {
   assert.ok(result.errors.some((e) => e.category === "ongeldig-label"));
 });
 
+test("een taak met een onbekend data-veld wordt afgekeurd (i.p.v. pas bij het compileren te breken)", () => {
+  const raw = JSON.stringify([
+    {
+      turn: 1,
+      type: "taak",
+      data: {
+        id: "T-0001",
+        naam: "Iets doen",
+        dekking: "GEDEKT",
+        source_turns: [1],
+        opmerking_dekking: null,
+      },
+    },
+  ]);
+  const result = parseModelResponse(raw);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some((e) => e.category === "onbekend-veld"));
+});
+
+test("een ziel_principe-beurt met een onbekend veld naast data wordt afgekeurd (live gereproduceerde bug)", () => {
+  const raw = JSON.stringify([
+    {
+      turn: 1,
+      type: "ziel_principe",
+      data: { titel: "Stiptheid", tekst: "Facturen op tijd sturen.", dekking: "GEDEKT", source_turns: [1] },
+      opmerking_dekking: null,
+    },
+  ]);
+  const result = parseModelResponse(raw);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some((e) => e.category === "onbekend-veld"));
+});
+
 test("meerdere fouten in één antwoord worden allemaal gerapporteerd", () => {
   const raw = JSON.stringify([
     { turn: 1, type: "taak", data: { id: "T-1" } },

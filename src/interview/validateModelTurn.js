@@ -14,8 +14,34 @@ const SPREKERS = new Set(["interviewer", "ondernemer"]);
 const AUTONOMIENIVEAUS = new Set(["autonoom", "eerst-vragen", "nooit"]);
 const TOOLSOORTEN = new Set(["huidig", "suggestie"]);
 
+// Toegestane velden per beurttype, in lijn met systemPrompt.js UITVOERFORMAAT
+// en manifest.schema.json ($defs.task/$defs.edge). Een veld hierbuiten wordt
+// nu al tijdens het interview afgekeurd (met kans op automatisch herstel via
+// de bestaande retry), i.p.v. pas bij het compileren als additionalProperties-
+// fout in het manifest.
+const NAAMSTAP_TOPLEVEL_VELDEN = new Set(["turn", "type", "naam"]);
+const DIALOOG_TOPLEVEL_VELDEN = new Set(["turn", "type", "spreker", "tekst"]);
+const AFRONDING_TOPLEVEL_VELDEN = new Set(["turn", "type"]);
+const DATA_BEURT_TOPLEVEL_VELDEN = new Set(["turn", "type", "data"]);
+
+const TAAK_DATA_VELDEN = new Set([
+  "id", "naam", "beschrijving", "trigger", "afhankelijk_van", "autonomie",
+  "escalatie", "faalgevolg", "dekking", "source_turns",
+]);
+const EDGE_DATA_VELDEN = new Set(["van", "naar", "soort", "dekking", "source_turns"]);
+const ZIEL_PRINCIPE_DATA_VELDEN = new Set(["titel", "tekst", "reden", "dekking", "source_turns"]);
+const SKILL_DATA_VELDEN = new Set(["naam", "domein", "dekking", "source_turns"]);
+const TOOL_DATA_VELDEN = new Set(["naam", "taak_id", "soort", "redenering", "dekking", "source_turns"]);
+
 function voegFoutToe(errors, category, message) {
   errors.push({ category, message });
+}
+
+function valideerOnbekendeVelden(obj, toegestaneVelden, errors, context) {
+  const onbekend = Object.keys(obj).filter((veld) => !toegestaneVelden.has(veld));
+  if (onbekend.length > 0) {
+    voegFoutToe(errors, "onbekend-veld", `${context}: onbekend veld/velden ${onbekend.join(", ")}`);
+  }
 }
 
 function isNietLegeString(waarde) {
@@ -56,6 +82,8 @@ function valideerData(beurt, errors, context) {
 }
 
 function valideerNaamstap(beurt, errors) {
+  const context = `naamstap beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, NAAMSTAP_TOPLEVEL_VELDEN, errors, context);
   if (!isNietLegeString(beurt.naam)) {
     voegFoutToe(errors, "ontbrekend-veld", "naamstap: naam ontbreekt of is leeg");
   }
@@ -64,12 +92,15 @@ function valideerNaamstap(beurt, errors) {
 /**
  * Puur signaal dat het model, na expliciete bevestiging van de ondernemer
  * (SPEC.md §2 punt 7), het interview als voldoende beschouwt. Geen extra
- * velden nodig — turn en type zijn al gecontroleerd door valideerBeurt.
+ * data-velden nodig — turn en type zijn al gecontroleerd door valideerBeurt.
  */
-function valideerAfronding() {}
+function valideerAfronding(beurt, errors) {
+  valideerOnbekendeVelden(beurt, AFRONDING_TOPLEVEL_VELDEN, errors, `afronding beurt ${beurt.turn}`);
+}
 
 function valideerDialoog(beurt, errors) {
   const context = `dialoog beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DIALOOG_TOPLEVEL_VELDEN, errors, context);
   if (!SPREKERS.has(beurt.spreker)) {
     voegFoutToe(errors, "ontbrekend-veld", `${context}: spreker moet "interviewer" of "ondernemer" zijn`);
   }
@@ -80,9 +111,11 @@ function valideerDialoog(beurt, errors) {
 
 function valideerTaak(beurt, errors) {
   const context = `taak beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DATA_BEURT_TOPLEVEL_VELDEN, errors, context);
   const data = valideerData(beurt, errors, context);
   if (!data) return;
 
+  valideerOnbekendeVelden(data, TAAK_DATA_VELDEN, errors, context);
   if (!isNietLegeString(data.id)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.id ontbreekt`);
   if (!isNietLegeString(data.naam)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.naam ontbreekt`);
   if (data.autonomie !== undefined && !AUTONOMIENIVEAUS.has(data.autonomie)) {
@@ -94,9 +127,11 @@ function valideerTaak(beurt, errors) {
 
 function valideerEdge(beurt, errors) {
   const context = `edge beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DATA_BEURT_TOPLEVEL_VELDEN, errors, context);
   const data = valideerData(beurt, errors, context);
   if (!data) return;
 
+  valideerOnbekendeVelden(data, EDGE_DATA_VELDEN, errors, context);
   if (!isNietLegeString(data.van)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.van ontbreekt`);
   if (!isNietLegeString(data.naar)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.naar ontbreekt`);
   valideerDekking(data, errors, context);
@@ -105,9 +140,11 @@ function valideerEdge(beurt, errors) {
 
 function valideerZielPrincipe(beurt, errors) {
   const context = `ziel_principe beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DATA_BEURT_TOPLEVEL_VELDEN, errors, context);
   const data = valideerData(beurt, errors, context);
   if (!data) return;
 
+  valideerOnbekendeVelden(data, ZIEL_PRINCIPE_DATA_VELDEN, errors, context);
   if (!isNietLegeString(data.tekst)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.tekst ontbreekt`);
   valideerDekking(data, errors, context);
   valideerSourceTurns(data, errors, context);
@@ -115,9 +152,11 @@ function valideerZielPrincipe(beurt, errors) {
 
 function valideerSkill(beurt, errors) {
   const context = `skill beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DATA_BEURT_TOPLEVEL_VELDEN, errors, context);
   const data = valideerData(beurt, errors, context);
   if (!data) return;
 
+  valideerOnbekendeVelden(data, SKILL_DATA_VELDEN, errors, context);
   if (!isNietLegeString(data.naam)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.naam ontbreekt`);
   valideerDekking(data, errors, context);
   valideerSourceTurns(data, errors, context);
@@ -125,9 +164,11 @@ function valideerSkill(beurt, errors) {
 
 function valideerTool(beurt, errors) {
   const context = `tool beurt ${beurt.turn}`;
+  valideerOnbekendeVelden(beurt, DATA_BEURT_TOPLEVEL_VELDEN, errors, context);
   const data = valideerData(beurt, errors, context);
   if (!data) return;
 
+  valideerOnbekendeVelden(data, TOOL_DATA_VELDEN, errors, context);
   if (!isNietLegeString(data.naam)) voegFoutToe(errors, "ontbrekend-veld", `${context}: data.naam ontbreekt`);
   if (!TOOLSOORTEN.has(data.soort)) {
     voegFoutToe(errors, "ontbrekend-veld", `${context}: soort moet "huidig" of "suggestie" zijn`);
