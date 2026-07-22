@@ -29,6 +29,14 @@ jobs:
 
       - run: npm run test:e2e
 
+      - name: Screenshots als artifact bewaren
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots
+          path: test-results/screenshots/
+          retention-days: 90
+
       - name: gitleaks installeren
         run: |
           curl -sL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz"
