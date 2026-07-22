@@ -17,7 +17,7 @@ waarop hij rust. Niets wordt verzonnen; een zichtbaar gat is correct gedrag.
 
 **[→ Probeer de live demo](https://richardclawson013.github.io/BedrijfspandAI/)**
 
-![Een afgerond, gevalideerd interview met downloadbare uitvoerbestanden](docs/screenshots/geldig-interview-resultaat.png)
+![Een afgerond, gevalideerd interview met downloadbare uitvoerbestanden](https://raw.githubusercontent.com/RichardClawson013/BedrijfspandAI/screenshots/docs/screenshots/geldig-interview-resultaat.png)
 
 > Deze screenshot wordt automatisch bijgewerkt door CI (`.github/workflows/screenshots.yml`)
 > bij elke push naar `master` — geen handmatige mockup.

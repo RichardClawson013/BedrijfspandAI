@@ -36,12 +36,17 @@ jobs:
           chmod +x gitleaks
           sudo mv gitleaks /usr/local/bin/gitleaks
 
-      - name: Committen als er iets veranderd is
+      - name: Committen naar aparte, onbeschermde screenshots-branch
         run: |
+          # master heeft branch protection (PR + review vereist voor niet-admins) —
+          # de bot mag daar dus terecht niet direct naar pushen. Screenshots gaan
+          # naar een losse, onbeschermde branch die master + de nieuwe PNG's
+          # weerspiegelt; de README verwijst naar het raw-content-adres daarvan.
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B screenshots
           git add docs/screenshots
           if ! git diff --cached --quiet; then
             git commit -m "chore: screenshots automatisch bijgewerkt [skip ci]"
-            git push
+            git push --force origin screenshots
           fi
